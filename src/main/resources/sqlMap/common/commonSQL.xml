@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="commonDaoSql">
+
+	<select id="selectComCodeList" resultType="com.mtpms.dto.comCodeDto" parameterType="java.lang.String">
+		 SELECT CODE, CODENAME FROM PMSCODE WHERE PARENTCODE = #{value} AND USEYN = 'Y'
+	</select>
+
+	<select id="selectProjectList" resultType="com.mtpms.dto.projectManageDto">
+		SELECT PROJECTID, PROJECTNAME, PROJECTSTARTDT, PROJECTENDDT, USEYN
+		  FROM PMSPROJECT
+	     WHERE USEYN = 'Y'
+	    ORDER BY PROJECTENDDT, PROJECTID
+	</select>
+
+	<select id="selectUserProjectList" resultType="com.mtpms.dto.projectManageDto" parameterType="java.lang.String">
+		SELECT PROJECTID, PROJECTNAME, PROJECTSTARTDT, PROJECTENDDT, USEYN
+		  FROM PMSPROJECT
+	     WHERE PROJECTID IN (SELECT PROJECTID FROM PMSUSERPROJECT WHERE USERID = #{value})
+	       AND USEYN = 'Y'
+	    ORDER BY PROJECTENDDT, PROJECTID
+	</select>
+
+	<select id="selectMenuList" resultType="com.mtpms.dto.menuManageDto" parameterType="java.lang.String">
+		SELECT PATH, MENUID, MENUNAME, PROJECTID, REPLACE(PROGRAMURL,'List.do','Input.do') PROGRAMURL
+	      FROM (
+			 		SELECT SYS_CONNECT_BY_PATH(A.MENUNAME,' #') AS PATH, LEVEL lv, A.MENUID, A.MENUNAME, A.PARENTMENUID, A.PROGRAMURL, A.SORTNO, A.SYSTEMGRADE, A.USEYN, B.CODENAME AS SYSTEMGRADENAME, A.PROJECTID
+					  FROM PMSMENU A, PMSCODE B
+				     WHERE 1 = 1
+				       AND A.SYSTEMGRADE = B.CODE(+)
+				       AND PROJECTID IN (SELECT PROJECTID FROM PMSUSERPROJECT WHERE USERID = #{value})
+					START WITH A.PARENTMENUID = '0'
+					CONNECT BY PRIOR A.MENUID = A.PARENTMENUID
+					ORDER SIBLINGS BY A.SORTNO
+			) WHERE LV > 1 AND PROGRAMURL IN ('/bbs/bbsMangeList.do','/bbs/bbsChatList.do')
+	</select>
+
+	<select id="selectpmsbbsFileInfo" parameterType="java.lang.Long" resultType="com.mtpms.dto.db.pmsbbsfileDto">
+		SELECT FILEID,SERVERPATH,SERVERFILE,LOCALFILE,USEYN,FILESIZE,EXT,BBSID FROM PMSBBSFILE WHERE FILEID = #{value}
+	</select>
+</mapper>

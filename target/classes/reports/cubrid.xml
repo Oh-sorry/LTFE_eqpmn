@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<jdbcDataAdapter class="net.sf.jasperreports.data.jdbc.JdbcDataAdapterImpl"><name>New Data Adapter (2)</name><driver>cubrid.jdbc.driver.CUBRIDDriver</driver><username>dba</username><password>oramcst</password><savePassword>true</savePassword><url>jdbc:cubrid:211.210.152.106:30000:mcstora:::?charset=UTF-8</url><database></database><serverAddress></serverAddress><classpath>C:\CUBRID\cubridadmin\driver\JDBC-11.0.5.0299-cubrid.jar</classpath></jdbcDataAdapter>

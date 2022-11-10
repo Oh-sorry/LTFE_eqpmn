@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mainDaoSql">
+
+	<select id="selectTopMenu" resultType="com.mtpms.dto.db.pmsmenuDto">
+		SELECT MENUID,MENUNAME,PARENTMENUID,PROGRAMURL,SORTNO,SYSTEMGRADE FROM PMSMENU WHERE PARENTMENUID = '0' AND USEYN = 'Y' ORDER BY SORTNO
+	</select>
+
+	<!-- select id="selectLeftMenu" parameterType="java.lang.String" resultType="com.mtpms.dto.db.pmsmenuDto">
+		SELECT MENUID,MENUNAME,PARENTMENUID,PROGRAMURL,SORTNO,SYSTEMGRADE FROM PMSMENU WHERE PARENTMENUID = #{value} AND USEYN = 'Y'  ORDER BY SORTNO
+	</select -->
+
+	<select id="selectLeftMenu" parameterType="java.lang.String" resultType="com.mtpms.dto.menuManageDto">
+		SELECT LEVEL, A.MENUID, A.MENUNAME, A.PARENTMENUID, A.SORTNO, A.SYSTEMGRADE, A.PROJECTID, A.PROGRAMURL
+		  FROM PMSMENU A, PMSCODE B
+	     WHERE 1 = 1
+	       AND A.SYSTEMGRADE = B.CODE(+)
+		 		 AND A.USEYN = 'Y'
+		 		 AND A.PROJECTID IN (SELECT PROJECTID FROM PMSUSERPROJECT WHERE USERID = #{value})
+		START WITH A.PARENTMENUID = 0
+		CONNECT BY PRIOR A.MENUID = A.PARENTMENUID
+		ORDER SIBLINGS BY A.SORTNO
+	</select>
+</mapper>

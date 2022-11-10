@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="lgoinDaoSql">
+
+	<select id="selecLoginChk" parameterType="com.mtpms.dto.loginDto" resultType="java.lang.Integer">
+		SELECT COUNT(1) cnt FROM PMSUSER WHERE USERID = #{userid} AND USERPASS = MD5(#{userpass}) AND USEYN = 'Y'
+	</select>
+
+	<select id="selecLoginInfo" parameterType="com.mtpms.dto.loginDto" resultType="com.mtpms.dto.loginDto">
+		SELECT USERID, USERNAME, '' USERPASS, USERGRADE
+		  FROM PMSUSER
+		 WHERE USERID = #{userid}
+		   AND USEYN = 'Y'
+	</select>
+
+</mapper>

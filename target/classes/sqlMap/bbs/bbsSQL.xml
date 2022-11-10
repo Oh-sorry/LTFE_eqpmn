@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="bbsDaoSql">
+
+	<select id="selectBbsList" resultType="com.mtpms.dto.bbsManageDto" parameterType="com.mtpms.dto.bbsManageDto">
+		SELECT A.ROWID, A.BBSID,A.MENUID,D.MENUNAME,A.PROJECTID,B.PROJECTNAME,A.USERID,C.USERNAME,A.TITLE,A.CONTENTS,A.GESIDATE,A.PARENTBBSID,A.USEYN,VIEWCNT,
+		       REPLACE(PROGRAMURL,'List.do','View.do') PROGRAMURL,
+		       (SELECT COUNT(1) FROM PMSBBS WHERE PARENTBBSID = A.BBSID AND USEYN = 'Y') AS REPLYCNT
+		  FROM (SELECT /*+ INDEX (PMSBBS PMSBBS_IDX02) */ ORDERBY_NUM() ROWID, BBSID,MENUID,PROJECTID,USERID,TITLE,CONTENTS,GESIDATE,PARENTBBSID,USEYN,VIEWCNT
+		          FROM PMSBBS
+		         WHERE 1  = 1
+		           <if test="leftMenuId != null and leftMenuId != ''">
+		           		AND MENUID = #{leftMenuId}
+		           </if>
+		           AND PARENTBBSID = 0
+		           AND USEYN = 'Y'
+		           AND PROJECTID IN (SELECT PROJECTID FROM PMSUSERPROJECT WHERE USERID = #{userid})
+		           <if test="searchprojectid != null and searchprojectid != ''">
+		           		AND PROJECTID = #{searchprojectid}
+		           </if>
+		           <if test="searchusername != null and searchusername != ''">
+		           		AND USERID IN (SELECT USERID FROM PMSUSER WHERE USERNAME LIKE '%'|| #{searchusername} ||'%')
+		           </if>
+		           <if test="searchtitle != null and searchtitle != ''">
+		           		AND (
+		           		     TITLE LIKE '%' || #{searchtitle} ||'%'
+		           		     OR CONTENTS LIKE '%' || #{searchtitle} ||'%'
+		           		     OR USERID IN (SELECT USERID FROM PMSUSER WHERE USERNAME LIKE '%'|| #{searchtitle} ||'%')
+		           		    )
+		           </if>
+		           ORDER BY GESIDATE DESC, BBSID DESC
+		           FOR ORDERBY_NUM() BETWEEN #{startno} AND #{endno}
+		       ) A,
+		      PMSPROJECT B, PMSUSER C, PMSMENU D
+		 WHERE 1 = 1
+		   AND A.PROJECTID = B.PROJECTID (+)
+		   AND A.MENUID = D.MENUID (+)
+		   AND A.USERID = C.USERID (+)
+	</select>
+
+	<select id="selectBbsListCnt" resultType="java.lang.Long" parameterType="com.mtpms.dto.bbsManageDto">
+        SELECT COUNT(1) CNT
+          FROM PMSBBS
+         WHERE 1 = 1
+           <if test="leftMenuId != null and leftMenuId != ''">
+         	    AND MENUID = #{leftMenuId}
+           </if>
+           AND PARENTBBSID = 0
+           AND USEYN = 'Y'
+           AND PROJECTID IN (SELECT PROJECTID FROM PMSUSERPROJECT WHERE USERID = #{userid})
+           <if test="searchprojectid != null and searchprojectid != ''">
+           		AND PROJECTID = #{searchprojectid}
+           </if>
+           <if test="searchusername != null and searchusername != ''">
+           		AND USERID IN (SELECT USERID FROM PMSUSER WHERE USERNAME LIKE '%'|| #{searchusername} ||'%')
+           </if>
+           <if test="searchtitle != null and searchtitle != ''">
+           		AND (
+           		     TITLE LIKE '%' || #{searchtitle} ||'%'
+           		     OR CONTENTS LIKE '%' || #{searchtitle} ||'%'
+           		     OR USERID IN (SELECT USERID FROM PMSUSER WHERE USERNAME LIKE '%'|| #{searchtitle} ||'%')
+           		    )
+           </if>
+	</select>
+
+	<select id="selectBbsSeq" resultType="java.lang.Long">
+		SELECT BBSSEQ.NEXT_VALUE FROM DUAL
+	</select>
+
+	<select id="selectBbsFileSeq" resultType="java.lang.Long">
+		SELECT BBSFILESEQ.NEXT_VALUE FROM DUAL
+	</select>
+
+	<update id="pmsbbsUpdate" parameterType="com.mtpms.dto.db.pmsbbsDto">
+		MERGE INTO PMSBBS A USING DUAL
+              ON A.BBSID = #{bbsid}
+              WHEN MATCHED THEN
+                   UPDATE SET A.MENUID = #{menuid},
+                              A.PROJECTID = #{projectid},
+                              A.TITLE = #{title},
+                              A.CONTENTS = #{contents}
+              WHEN NOT MATCHED THEN
+                   INSERT (BBSID,MENUID,PROJECTID,USERID,TITLE,CONTENTS,GESIDATE,PARENTBBSID,USEYN,VIEWCNT) VALUES (#{bbsid},#{menuid},#{projectid},#{userid},#{title},#{contents},#{gesidate},#{parentbbsid},'Y',0)
+	</update>
+
+	<insert id="pmsbbsFileInsert" parameterType="com.mtpms.dto.db.pmsbbsfileDto">
+		INSERT INTO PMSBBSFILE (FILEID,SERVERPATH,SERVERFILE,LOCALFILE,USEYN,FILESIZE,EXT,BBSID)
+		VALUES (#{fileid},#{serverpath},#{serverfile},#{localfile},'Y',#{filesize},#{ext},#{bbsid})
+	</insert>
+
+	<update id="pmsbbsFileDelete" parameterType="com.mtpms.dto.db.pmsbbsfileDto">
+		UPDATE PMSBBSFILE SET USEYN = 'N' WHERE FILEID = #{fileid}
+	</update>
+
+	<select id="selectBbsInfo" resultType="com.mtpms.dto.bbsManageDto" parameterType="com.mtpms.dto.bbsManageDto">
+		SELECT A.BBSID,A.MENUID,A.PROJECTID,B.PROJECTNAME,A.USERID,C.USERNAME,A.TITLE,A.CONTENTS,A.GESIDATE,A.PARENTBBSID,A.USEYN,
+		       (SELECT COUNT(1) FROM PMSBBS WHERE PARENTBBSID = A.BBSID AND USEYN = 'Y') AS REPLYCNT
+		  FROM PMSBBS A, PMSPROJECT B, PMSUSER C
+		 WHERE A.BBSID = #{bbsid}
+  		   AND A.PROJECTID = B.PROJECTID (+)
+		   AND A.USERID = C.USERID (+)
+	</select>
+
+	<select id="selectBbsFileInfo" parameterType="com.mtpms.dto.bbsManageDto" resultType="com.mtpms.dto.db.pmsbbsfileDto">
+		SELECT FILEID,SERVERPATH,SERVERFILE,LOCALFILE,USEYN,FILESIZE,EXT,BBSID FROM PMSBBSFILE WHERE BBSID = #{bbsid} AND USEYN = 'Y' ORDER BY FILEID DESC
+	</select>
+
+	<update id="pmsbbsDelete" parameterType="com.mtpms.dto.bbsManageDto">
+		UPDATE PMSBBS SET USEYN = 'N' WHERE BBSID = #{bbsid}
+	</update>
+
+	<select id="selectChildBbsInfo" resultType="com.mtpms.dto.bbsManageDto" parameterType="com.mtpms.dto.bbsManageDto">
+		SELECT A.BBSID,A.MENUID,A.PROJECTID,B.PROJECTNAME,A.USERID,C.USERNAME,A.TITLE,A.CONTENTS,A.GESIDATE,A.PARENTBBSID,A.USEYN
+		  FROM PMSBBS A, PMSPROJECT B, PMSUSER C
+		 WHERE A.PARENTBBSID = #{bbsid}
+		   AND A.USEYN = 'Y'
+  		   AND A.PROJECTID = B.PROJECTID (+)
+		   AND A.USERID = C.USERID (+)
+		ORDER BY A.BBSID DESC
+	</select>
+
+	<update id="pmsbbsviewcnt" parameterType="com.mtpms.dto.bbsManageDto">
+		UPDATE PMSBBS SET VIEWCNT = VIEWCNT + 1 WHERE BBSID = #{bbsid}
+	</update>
+
+</mapper>

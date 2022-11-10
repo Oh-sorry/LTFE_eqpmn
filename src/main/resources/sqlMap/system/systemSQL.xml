@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="systemDaoSql">
+
+	<select id="selectUserManageList" parameterType="com.mtpms.dto.userManageDto" resultType="com.mtpms.dto.userManageDto">
+		SELECT A.USERID, A.USERNAME, A.USERGRADE, A.USEYN, B.CODENAME AS USERGRADENAME,
+		       (SELECT GROUP_CONCAT(D.PROJECTNAME) FROM PMSUSERPROJECT C, PMSPROJECT D WHERE C.USERID = A.USERID AND C.PROJECTID = D.PROJECTID AND D.USEYN = 'Y') AS PROJECTNAME,
+		       (SELECT GROUP_CONCAT(D.PROJECTID) FROM PMSUSERPROJECT C, PMSPROJECT D WHERE C.USERID = A.USERID AND C.PROJECTID = D.PROJECTID AND D.USEYN = 'Y') AS PROJECTID
+		  FROM PMSUSER A, PMSCODE B
+		 WHERE 1 = 1
+		   AND A.USERGRADE = B.CODE(+)
+			<if test="userid != null and userid != ''">
+				AND A.USERID LIKE '%' || #{userid} || '%'
+			</if>
+			<if test="username != null and username != ''">
+				AND A.USERNAME LIKE '%' || #{username} || '%'
+			</if>
+			<if test="usergrade != null and usergrade != ''">
+				AND A.USERGRADE = #{usergrade}
+			</if>
+			<if test="useyn != null and useyn != ''">
+				AND A.USEYN = #{useyn}
+			</if>
+		ORDER BY A.USERID
+	</select>
+
+	<update id="pmsuserUpdate" parameterType="com.mtpms.dto.db.pmsuserDto">
+		MERGE INTO PMSUSER A USING DUAL
+              ON A.USERID = #{userid}
+              WHEN MATCHED THEN
+                   UPDATE SET A.USERNAME = #{username}, A.USERGRADE= #{usergrade}, A.USEYN = #{useyn}
+              WHEN NOT MATCHED THEN
+                   INSERT (USERID, USERNAME, USERPASS, USERGRADE, USEYN) VALUES (#{userid}, #{username}, MD5('init00!'), #{usergrade}, #{useyn})
+	</update>
+
+	<update id="pmsuserpassUpdate" parameterType="com.mtpms.dto.db.pmsuserDto">
+		UPDATE PMSUSER
+           SET USERPASS = MD5(#{userpass})
+		 WHERE USERID = #{userid}
+	</update>
+
+	<select id="selectUserDupChk" parameterType="com.mtpms.dto.db.pmsuserDto" resultType="java.lang.Integer">
+		SELECT COUNT(1)
+		  FROM PMSUSER
+		 WHERE USERID = #{userid}
+	</select>
+
+	<delete id="pmsuserDelete" parameterType="com.mtpms.dto.db.pmsuserDto">
+		DELETE FROM PMSUSER WHERE USERID = #{userid}
+	</delete>
+
+	<delete id="pmsuserProjectDelete" parameterType="java.lang.String">
+		DELETE FROM PMSUSERPROJECT WHERE USERID = #{value}
+	</delete>
+
+	<insert id="pmsuserProjectInsert" parameterType="com.mtpms.dto.db.pmsuserprojectDto">
+		INSERT INTO PMSUSERPROJECT(USERID, PROJECTID) VALUES(#{userid}, #{projectid})
+	</insert>
+
+	<select id="selectParentMenuList" resultType="com.mtpms.dto.menuManageDto">
+		SELECT MENUID,MENUNAME
+		  FROM PMSMENU
+		 WHERE PARENTMENUID = 0
+		 ORDER BY MENUNAME
+	</select>
+
+	<select id="selectMenuManageList" parameterType="com.mtpms.dto.menuManageDto" resultType="com.mtpms.dto.menuManageDto">
+		SELECT SYS_CONNECT_BY_PATH(A.MENUNAME,'>') AS PATH, LEVEL, A.MENUID, A.MENUNAME, A.PARENTMENUID, A.PROGRAMURL, A.SORTNO, A.SYSTEMGRADE, A.USEYN, B.CODENAME AS SYSTEMGRADENAME
+		  FROM PMSMENU A, PMSCODE B
+	     WHERE 1 = 1
+	       AND A.SYSTEMGRADE = B.CODE(+)
+			<if test="menuname != null and menuname != ''">
+				AND A.MENUNAME LIKE '%' || #{menuname} || '%'
+			</if>
+			<if test="useyn != null and useyn != ''">
+				AND A.USEYN = #{useyn}
+			</if>
+		START WITH A.PARENTMENUID = #{menuid}
+		CONNECT BY PRIOR A.MENUID = A.PARENTMENUID
+		ORDER SIBLINGS BY A.SORTNO
+	</select>
+
+	<update id="pmsmenuUpdate" parameterType="com.mtpms.dto.db.pmsmenuDto">
+		MERGE INTO PMSMENU A USING DUAL
+              ON A.MENUID = #{menuid}
+              WHEN MATCHED THEN
+                   UPDATE SET A.MENUNAME = #{menuname},
+                              A.PARENTMENUID= #{parentmenuid},
+                              A.PROGRAMURL= #{programurl},
+                              A.SORTNO= #{sortno},
+                              A.SYSTEMGRADE= #{systemgrade},
+                              A.USEYN = #{useyn}
+              WHEN NOT MATCHED THEN
+                   INSERT (MENUID,MENUNAME,PARENTMENUID,PROGRAMURL,SORTNO,SYSTEMGRADE,USEYN)
+                   VALUES (MENUIDSEQ.NEXT_VALUE, #{menuname}, #{parentmenuid}, #{programurl}, #{sortno}, #{systemgrade}, #{useyn})
+	</update>
+
+	<delete id="pmsmenuDelete" parameterType="com.mtpms.dto.db.pmsmenuDto">
+		DELETE FROM PMSMENU WHERE MENUID = #{menuid}
+	</delete>
+
+	<select id="selectCodeManageList" parameterType="com.mtpms.dto.codeManageDto" resultType="com.mtpms.dto.codeManageDto">
+		SELECT SYS_CONNECT_BY_PATH(CODENAME,'>') AS PATH, LEVEL, CODE,CODENAME,PARENTCODE,USEYN
+		  FROM PMSCODE
+	     WHERE 1 = 1
+			<if test="codename != null and codename != ''">
+				AND CODENAME LIKE '%' || #{codename} || '%'
+			</if>
+			<if test="useyn != null and useyn != ''">
+				AND USEYN = #{useyn}
+			</if>
+		START WITH PARENTCODE = #{code}
+		CONNECT BY PRIOR CODE = PARENTCODE
+		ORDER SIBLINGS BY CODE
+	</select>
+
+	<select id="selectParentCodeList" resultType="com.mtpms.dto.codeManageDto">
+		SELECT CODE,CODENAME
+		  FROM PMSCODE
+		 WHERE PARENTCODE = '00000'
+		 ORDER BY CODENAME
+	</select>
+
+	<update id="pmscodeUpdate" parameterType="com.mtpms.dto.db.pmscodeDto">
+		MERGE INTO PMSCODE A USING DUAL
+              ON A.CODE = #{code}
+              WHEN MATCHED THEN
+                   UPDATE SET A.CODENAME = #{codename},
+                              A.PARENTCODE= #{parentcode},
+                              A.USEYN = #{useyn}
+              WHEN NOT MATCHED THEN
+                   INSERT (CODE,CODENAME,PARENTCODE,USEYN)
+                   VALUES (TO_CHAR(CODESEQ.NEXT_VALUE,'00009'), #{codename}, #{parentcode}, #{useyn})
+	</update>
+
+	<delete id="pmscodeDelete" parameterType="com.mtpms.dto.db.pmscodeDto">
+		DELETE FROM PMSCODE WHERE CODE = #{code}
+	</delete>
+
+	<select id="selectProjectManageList" parameterType="com.mtpms.dto.projectManageDto" resultType="com.mtpms.dto.projectManageDto">
+		SELECT PROJECTID, PROJECTNAME, PROJECTSTARTDT, PROJECTENDDT, USEYN
+		  FROM PMSPROJECT
+	     WHERE 1 = 1
+			<if test="projectname != null and projectname != ''">
+				AND PROJECTNAME LIKE '%' || #{projectname} || '%'
+			</if>
+			<if test="useyn != null and useyn != ''">
+				AND USEYN = #{useyn}
+			</if>
+		ORDER BY PROJECTID
+	</select>
+
+	<update id="pmsprojectUpdate" parameterType="com.mtpms.dto.db.pmsprojectDto">
+		MERGE INTO PMSPROJECT A USING DUAL
+              ON A.PROJECTID = #{projectid}
+              WHEN MATCHED THEN
+                   UPDATE SET A.PROJECTNAME = #{projectname},
+                              A.PROJECTSTARTDT= #{projectstartdt},
+                              A.PROJECTENDDT = #{projectenddt},
+                              A.USEYN = #{useyn}
+              WHEN NOT MATCHED THEN
+                   INSERT (PROJECTID, PROJECTNAME, PROJECTSTARTDT, PROJECTENDDT, USEYN)
+                   VALUES (TO_CHAR(PROJECTIDSEQ.NEXT_VALUE,'00009'), #{projectname}, #{projectstartdt}, #{projectenddt}, #{useyn})
+	</update>
+
+	<delete id="pmsprojectDelete" parameterType="com.mtpms.dto.db.pmsprojectDto">
+		DELETE FROM PMSPROJECT WHERE PROJECTID = #{projectid}
+	</delete>
+
+	<insert id="pmsprojectInsert" parameterType="com.mtpms.dto.db.pmsprojectDto">
+		INSERT INTO PMSPROJECT(PROJECTID, PROJECTNAME, PROJECTSTARTDT, PROJECTENDDT, USEYN)
+        VALUES (#{projectid}, #{projectname}, #{projectstartdt}, #{projectenddt}, #{useyn})
+	</insert>
+
+	<insert id="pmsmenuInsert" parameterType="com.mtpms.dto.db.pmsmenuDto">
+		INSERT INTO PMSMENU (MENUID,MENUNAME,PARENTMENUID,PROGRAMURL,SORTNO,SYSTEMGRADE,USEYN,PROJECTID)
+        VALUES (#{menuid}, #{menuname}, #{parentmenuid}, #{programurl}, #{sortno}, #{systemgrade}, #{useyn}, #{projectid})
+	</insert>
+
+	<select id="selectmenuidseq" resultType="java.lang.Long">
+		SELECT MENUIDSEQ.NEXT_VALUE FROM DUAL
+	</select>
+
+	<select id="selectProjectidSeq" resultType="java.lang.String">
+		SELECT TO_CHAR(PROJECTIDSEQ.NEXT_VALUE,'00009') FROM DUAL
+	</select>
+</mapper>
