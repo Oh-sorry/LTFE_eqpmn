@@ -1,28 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="eqpmnDaoSql">
-	<select id="selectEqpmnList" parameterType="com.mtpms.dto.eqpmnManageDto" resultType="com.mtpms.dto.eqpmnManageDto">
-		SELECT	ROWNUM AS rm, 
-				A.group_code, 
-				B.manage_no, 
-				B.purchs_date, 
-				B.purchs_amount, 
-				C.name, 
-				E.pern_no , 
-				E.use_yn, 
-				B.use_place, 
-				B.disuse_yn
+	<select id="selectEqpmnList"
+		parameterType="com.mtpms.dto.eqpmnManageDto"
+		resultType="com.mtpms.dto.eqpmnManageDto">
+		SELECT A.code_nm, B.manage_no, B.purchs_date,
+		B.purchs_amount, C.name, E.pern_no , E.use_yn, B.use_place,
+		B.disuse_yn
 
-		FROM	cmmn_code_manage A, 
-				eqpmn_manage B, 
-				hpa100t C, 
-				eqpmn_user_mapping D, 
-				eqpmn_use_manage E
+		FROM cmmn_code_manage A, eqpmn_manage B, hpa100t C,
+		eqpmn_user_mapping D,
+		eqpmn_use_manage E
 
-		WHERE	A.code = B.eqpmn_code
-		AND		B.manage_no = D.manage_no 
-		AND		D.pern_no = E.pern_no 
-		AND		E.pern_no = C.pern_no
-		
+		WHERE 1 = 1
+		AND A.code = B.eqpmn_code (+)
+		AND B.manage_no = D.manage_no (+)
+		AND C.pern_no = D.pern_no
+		AND D.pern_no = E.pern_no
+		AND a.group_code NOT IN ('HODITYPE')
+			<if test="codenm != null and codenm != '전체'">
+				AND A.code_nm LIKE '%' || #{codenm} || '%'
+			</if>
+			<!-- 
+			<if test="purchsdate != null and purchsdate != ''">
+				AND B.purchs_date LIKE '%' || #{purchsdate} || '%'
+			</if>
+			<if test="useyn != null and useyn != ''">
+				AND E.use_yn = #{useyn}
+			</if>
+			<if test="disuseyn != null and disuseyn != ''">
+				AND B.disuse_yn = #{disuseyn}
+			</if>
+			<if test="useplace != null and useplace != ''">
+				AND B.use_place LIKE '%' || #{useplace} || '%'
+			</if> -->
+		GROUP BY B.manage_no
+	</select>
+
+	<select id="selectEqpmnCode"
+		resultType="com.mtpms.dto.eqpmnManageDto">
+		SELECT A.code_nm, b.manage_no, a.code
+		from cmmn_code_manage A, eqpmn_manage B
+		WHERE A.code = B.eqpmn_code (+)
+		AND a.group_code NOT IN ('HODITYPE')
+		AND A.group_code IN ('EQP1')
+		GROUP BY A.code_nm
+	</select>
+
+	<select id="selectEqpmnCode2"
+		resultType="com.mtpms.dto.eqpmnManageDto">
+		SELECT b.use_place
+		from cmmn_code_manage A, eqpmn_manage B
+		WHERE A.code = B.eqpmn_code (+)
+		AND a.group_code NOT IN ('HODITYPE')
+		AND b.use_place NOT IN ('null')
+		GROUP BY b.use_place
 	</select>
 </mapper>

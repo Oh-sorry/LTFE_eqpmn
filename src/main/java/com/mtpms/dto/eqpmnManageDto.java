@@ -11,106 +11,87 @@ public class eqpmnManageDto implements Serializable{
 	 */
 	private static final long serialVersionUID = 1715063308317078975L;
 
-	private String group_code;
-	private String manage_no;
-	private Date purchs_date;
-	private long purchs_amount;
+	private String codenm;
+	private String manageno;
+	private String purchsdate;
+	private int purchsamount;
 	private String name;
-	private String pern_no;
-	private boolean use_yn;
-	private String use_place;
-	private boolean disuse_yn;
+	private String pernno;
+	private String useyn;
+	private String useplace;
+	private String disuseyn;
 	
-	
-	public String getGroup_code() {
-		return group_code;
+	public String getCodenm() {
+		return codenm;
 	}
 
-
-	public void setGroup_code(String group_code) {
-		this.group_code = group_code;
+	public void setCodenm(String codenm) {
+		this.codenm = codenm;
 	}
 
-
-	public String getManage_no() {
-		return manage_no;
+	public String getManageno() {
+		return manageno;
 	}
 
-
-	public void setManage_no(String manage_no) {
-		this.manage_no = manage_no;
+	public void setManageno(String manageno) {
+		this.manageno = manageno;
 	}
 
-
-	public Date getPurchs_date() {
-		return purchs_date;
+	public String getPurchsdate() {
+		return purchsdate;
 	}
 
-
-	public void setPurchs_date(Date purchs_date) {
-		this.purchs_date = purchs_date;
+	public void setPurchsdate(String purchsdate) {
+		this.purchsdate = purchsdate;
 	}
 
-
-	public long getPurchs_amount() {
-		return purchs_amount;
+	public int getPurchsamount() {
+		return purchsamount;
 	}
 
-
-	public void setPurchs_amount(long purchs_amount) {
-		this.purchs_amount = purchs_amount;
+	public void setPurchsamount(int purchsamount) {
+		this.purchsamount = purchsamount;
 	}
-
 
 	public String getName() {
 		return name;
 	}
 
-
 	public void setName(String name) {
 		this.name = name;
 	}
 
-
-	public String getPern_no() {
-		return pern_no;
+	public String getPernno() {
+		return pernno;
 	}
 
-
-	public void setPern_no(String pern_no) {
-		this.pern_no = pern_no;
+	public void setPernno(String pernno) {
+		this.pernno = pernno;
 	}
 
-
-	public boolean isUse_yn() {
-		return use_yn;
+	public String getUseyn() {
+		return useyn;
 	}
 
-
-	public void setUse_yn(boolean use_yn) {
-		this.use_yn = use_yn;
+	public void setUseyn(String useyn) {
+		this.useyn = useyn;
 	}
 
-
-	public String getUse_place() {
-		return use_place;
+	public String getUseplace() {
+		return useplace;
 	}
 
-
-	public void setUse_place(String use_place) {
-		this.use_place = use_place;
+	public void setUseplace(String useplace) {
+		this.useplace = useplace;
 	}
 
-
-	public boolean isDisuse_yn() {
-		return disuse_yn;
+	public String getDisuseyn() {
+		return disuseyn;
 	}
 
-
-	public void setDisuse_yn(boolean disuse_yn) {
-		this.disuse_yn = disuse_yn;
+	public void setDisuseyn(String disuseyn) {
+		this.disuseyn = disuseyn;
 	}
-
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;

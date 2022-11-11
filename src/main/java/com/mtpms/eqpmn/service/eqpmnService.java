@@ -10,5 +10,7 @@ public interface eqpmnService {
 
 	public Map<String, Object> selectEqpmnList(eqpmnManageDto eqpmnManageDto) throws Exception;
 
+	public List<eqpmnManageDto> selectEqpmnCode() throws Exception;
 
+	public List<eqpmnManageDto> selectEqpmnCode2() throws Exception;
 }

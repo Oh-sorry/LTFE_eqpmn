@@ -24,6 +24,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springmodules.validation.commons.DefaultBeanValidator;
 
@@ -52,14 +53,14 @@ public class eqpmnController {
 	public String eqpmnManage(@ModelAttribute("eqpmnManageDto") eqpmnManageDto eqpmnManageDto, HttpServletRequest request, HttpServletResponse reponse, HttpSession session, ModelMap model) throws Exception {
 
 		List<comCodeDto> systemGrade = commonService.selectComCodeList("00003");
-		List<projectManageDto> projectList = commonService.selectProjectList();
-
-		ObjectMapper objectMapper = new ObjectMapper();
-		Map result = objectMapper.convertValue(eqpmnManageDto, Map.class);
+//		List<projectManageDto> projectList = commonService.selectProjectList();
+//
+//		ObjectMapper objectMapper = new ObjectMapper();
+//		Map result = objectMapper.convertValue(eqpmnManageDto, Map.class);
 
 		model.addAttribute("systemGrade", systemGrade);
-		model.addAttribute("projectList", projectList);
-		model.addAttribute("searchFormData", result);
+//		model.addAttribute("projectList", projectList);
+//		model.addAttribute("searchFormData", result);
 		model.addAttribute("pageUrl", "/eqpmn/eqpmnManage.jsp");
 		return "main";
 	}
@@ -70,5 +71,19 @@ public class eqpmnController {
 		ModelAndView modelAndView = new ModelAndView("jsonView", map);
 		
 		return modelAndView;
+	}
+	
+	@RequestMapping(value="/eqpmn/selectEqpmnCode.ajax", method= {RequestMethod.GET, RequestMethod.POST})
+	public @ResponseBody List<eqpmnManageDto> selectEqpmnCode(@ModelAttribute("eqpmnManageDto") eqpmnManageDto eqpmnManageDto,HttpSession session, ModelMap model) throws Exception {
+		
+		List<eqpmnManageDto> list = eqpmnService.selectEqpmnCode();
+		return list;
+	}
+	
+	@RequestMapping(value="/eqpmn/selectEqpmnCode2.ajax", method= {RequestMethod.GET, RequestMethod.POST})
+	public @ResponseBody List<eqpmnManageDto> selectEqpmnCode2(@ModelAttribute("eqpmnManageDto") eqpmnManageDto eqpmnManageDto,HttpSession session, ModelMap model) throws Exception {
+		
+		List<eqpmnManageDto> list = eqpmnService.selectEqpmnCode2();
+		return list;
 	}
 }

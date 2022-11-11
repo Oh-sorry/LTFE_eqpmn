@@ -16,4 +16,11 @@ public class eqpmnDao extends EgovAbstractMapper{
 		return selectList("eqpmnDaoSql.selectEqpmnList", eqpmnManageDto);
 	}
 
+	public List<eqpmnManageDto> selectEqpmnCode() throws Exception {
+		return selectList("eqpmnDaoSql.selectEqpmnCode");
+	}
+
+	public List<eqpmnManageDto> selectEqpmnCode2() throws Exception {
+		return selectList("eqpmnDaoSql.selectEqpmnCode2");
+	}
 }

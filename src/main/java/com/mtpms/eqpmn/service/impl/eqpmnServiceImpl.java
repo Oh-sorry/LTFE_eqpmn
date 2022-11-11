@@ -28,5 +28,18 @@ public class eqpmnServiceImpl extends EgovAbstractServiceImpl implements eqpmnSe
 		
 		return map;
 	};
-
+	
+	public List<eqpmnManageDto> selectEqpmnCode() throws Exception {
+		
+		List<eqpmnManageDto> list = eqpmnDao.selectEqpmnCode();
+		
+		return list;
+	}
+	
+	public List<eqpmnManageDto> selectEqpmnCode2() throws Exception {
+		
+		List<eqpmnManageDto> list = eqpmnDao.selectEqpmnCode2();
+		
+		return list;
+	}
 }

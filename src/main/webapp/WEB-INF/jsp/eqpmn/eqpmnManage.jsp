@@ -10,7 +10,7 @@
 		   	url:"${pageContext.request.contextPath}/eqpmn/eqpmnManage.ajax",
 		   	mtype: "POST",
 			datatype: "json",
-			postData : {'useyn':'Y'},
+			postData : {'codenm':'0'},
 			jsonReader : {
 				root: "resultList",
 				repeatitems: false
@@ -18,15 +18,15 @@
 			loadtext : '조회 중 입니다.',
 			shrinkToFit:false,
 			colModel:[
-		   		{label:'NO', name:'rownum', hidden:true},
-		   		{label:'장비명', name:'group_code', width:30},
-		   		{label:'관리번호', name:'manage_no', width:30},
-		   		{label:'구매일', name:'purchs_date', width:30},
-		   		{label:'구매금액', name:'purchs_amount', width:30},
-		   		{label:'사용자', name:'name', width:20},
-		   		{label:'사용여부', name:'use_yn', hidden:true},
-		   		{label:'폐기여부', name:'disuse_yn', width:20},
-		   		{label:'사용장소', name:'use_place', width:30}
+				{label:'사번', name:'pernno', hidden:true},
+		   		{label:'장비명', name:'codenm', width:30},
+		   		{label:'관리번호', name:'manageno', width:30},
+		   		{label:'구매일', name:'purchsdate', width:30},
+		   		{label:'구매금액', name:'purchsamount', width:30},
+		   		{label:'사용자 ', name:'name', width:20},
+		   		{label:'사용여부', name:'useyn', hidden:true},
+		   		{label:'폐기여부', name:'disuseyn', width:20},
+		   		{label:'사용장소', name:'useplace', width:30}
 		   	],
 		   	loadonce: true,
 		   	sortable : true,
@@ -41,15 +41,63 @@
 
 		$("#gridList1").setGridWidth($('#content').width()-25, true);
 		
-		function goSearch() {
-			var formData = $('#searchForm').serializeArray();
-			$('#gridList1').clearGridData();
-			$('#gridList1').setGridParam({datatype : "json",
-				                          postData : formData
-				             }).trigger("reloadGrid");
-
-		}
+		goMenuSelect();
+		goMenuSelect2();
 	});
+	function goSearch() {
+		var formData = $('#searchForm').serializeArray();
+		
+		alert(formData);
+		$('#gridList1').clearGridData();
+		$('#gridList1').setGridParam({datatype : "json",
+			                          postData : formData
+			             }).trigger("reloadGrid");
+
+	}
+	function goMenuSelect() {
+		$.ajax({
+             type : "POST",
+             url : "${pageContext.request.contextPath}/eqpmn/selectEqpmnCode.ajax",
+             async: false,
+             success : function(data){
+            	 if(data != null) {
+            		 selectoption = "<option value='0'>전체</option>";
+                     $.each(data , function (i, item) {
+                    	 selectoption += "<option value=i>" + item.codenm + "</option>";
+                     });
+                     $('[id=searchForm] #codenm option').remove();
+                     $('[id=searchForm] #codenm').append(selectoption);
+                     
+            	 }
+             },
+             error : function(XMLHttpRequest, textStatus, errorThrown){
+                 alert("작업 중 오류가 발생하였습니다.")
+             }
+         });
+	}
+	function goMenuSelect2() {
+		$.ajax({
+             type : "POST",
+             url : "${pageContext.request.contextPath}/eqpmn/selectEqpmnCode2.ajax",
+             async: false,
+             success : function(data){
+            	 if(data != null) {
+            		 selectoption = "<option value='0'>전체</option>";
+            		    $.each(data , function (i, item) {
+            		   	 selectoption += "<option value=i>" + item.useplace + "</option>";
+            		    });
+            		    $('[id=searchForm] #useplace option').remove();
+            		    $('[id=searchForm] #useplace').append(selectoption);
+                     
+            	 }
+             },
+             error : function(XMLHttpRequest, textStatus, errorThrown){
+                 alert("작업 중 오류가 발생하였습니다.")
+             }
+         });
+	}
+	
+	
 </script>
 <div class="container float-left">
 	<div class="page-header">
@@ -61,19 +109,21 @@
      		<div class="input-group-prepend">
        			<div class="input-group-text">구분</div>
      		</div>
-  		    <select class="form-control" id="code" name="code" style="width:100px"></select>
+  		    <select class="form-control" id="codenm" name="codenm" style="width:100px"></select>
    		</div>
    		<div class="input-group mb-2 mr-sm-2">
      		<div class="input-group-prepend">
        			<div class="input-group-text">구매일자</div>
      		</div>
-     		<input type="text" class="form-control" id="codename" name="codename" style="width:150px">
+     		<input type="text" class="form-control" id="purchsdate" name="purchsdate" style="width:100px">
+<!--      		<p>~</p>
+     		<input type="text" class="form-control" id="purchsdate" name="purchsdate" style="width:100px"> -->
    		</div>
    		<div class="input-group mb-2 mr-sm-2">
      		<div class="input-group-prepend">
        			<div class="input-group-text">사용여부</div>
      		</div>
-  		    <select class="form-control" id="useyn" name="useyn" style="width:100px">
+  		    <select class="form-control" id="useyn" name="useyn" style="width:60px">
         		<option value="Y" selected>Y</option>
         		<option value="N">N</option>
       		</select>
@@ -82,16 +132,16 @@
      		<div class="input-group-prepend">
        			<div class="input-group-text">폐기여부</div>
      		</div>
-  		    <select class="form-control" id="useyn" name="useyn" style="width:100px">
-        		<option value="Y" selected>Y</option>
-        		<option value="N">N</option>
+  		    <select class="form-control" id="disuseyn" name="disuseyn" style="width:60px">
+        		<option value="Y">Y</option>
+        		<option value="N" selected>N</option>
       		</select>
    		</div>
    		<div class="input-group mb-2 mr-sm-2">
      		<div class="input-group-prepend">
        			<div class="input-group-text">사용장소</div>
      		</div>
-  		    <select class="form-control" id="code" name="code" style="width:150px"></select>
+  		    <select class="form-control" id="useplace" name="useplace" style="width:150px"></select>
    		</div>
 		<button type="button" class="btn btn-sm btn-info mb-2" onclick="javascript:goSearch()"><i class="bi bi-search"></i> 조회</button>
 	</form>
