@@ -42,4 +42,39 @@ public class eqpmnServiceImpl extends EgovAbstractServiceImpl implements eqpmnSe
 		
 		return list;
 	}
+	
+	public List<eqpmnManageDto> selectEqpmnCodeList() throws Exception {
+		List<eqpmnManageDto> list = eqpmnDao.selectEqpmnCodeList();
+		
+		return list;
+	}
+	
+	public List<eqpmnManageDto> selectCnmList() throws Exception {
+		List<eqpmnManageDto> list = eqpmnDao.selectCnmList();
+	
+		return list;
+	}
+	
+	public int eqpmnUpdate(eqpmnManageDto eqpmnManageDto) throws Exception {
+		int rtn = eqpmnDao.eqpmnUpdate(eqpmnManageDto);
+		
+		return rtn;
+	}
+	
+	public Map<String, Object> eqpmnManageList(eqpmnManageDto eqpmnManageDto) throws Exception {
+		
+		List<eqpmnManageDto> list = eqpmnDao.eqpmnManageList(eqpmnManageDto);
+		
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("resultList", list);
+		
+		return map;
+	}
+	
+	public List<eqpmnManageDto> selectEqpmnListCode() throws Exception {
+		
+		List<eqpmnManageDto> list = eqpmnDao.selectEqpmnListCode();
+		
+		return list;
+	}
 }

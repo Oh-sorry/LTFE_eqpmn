@@ -20,7 +20,25 @@ public class eqpmnManageDto implements Serializable{
 	private String useyn;
 	private String useplace;
 	private String disuseyn;
+	private String eqpmncode;
+	private String remark;
 	
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	public String getEqpmncode() {
+		return eqpmncode;
+	}
+
+	public void setEqpmncode(String eqpmncode) {
+		this.eqpmncode = eqpmncode;
+	}
+
 	public String getCodenm() {
 		return codenm;
 	}

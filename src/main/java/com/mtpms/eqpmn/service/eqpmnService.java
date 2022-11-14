@@ -13,4 +13,14 @@ public interface eqpmnService {
 	public List<eqpmnManageDto> selectEqpmnCode() throws Exception;
 
 	public List<eqpmnManageDto> selectEqpmnCode2() throws Exception;
+
+	public List<eqpmnManageDto> selectEqpmnCodeList() throws Exception;
+
+	public List<eqpmnManageDto> selectCnmList() throws Exception;
+
+	public int eqpmnUpdate(eqpmnManageDto eqpmnManageDto) throws Exception;
+
+	public Map<String, Object> eqpmnManageList(eqpmnManageDto eqpmnManageDto) throws Exception;
+
+	public List<eqpmnManageDto> selectEqpmnListCode() throws Exception;
 }
