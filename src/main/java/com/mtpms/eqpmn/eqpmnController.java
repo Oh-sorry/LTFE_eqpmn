@@ -126,4 +126,11 @@ public class eqpmnController {
 		List<eqpmnManageDto> list = eqpmnService.selectEqpmnListCode();
 		return list;
 	}
+	
+	@RequestMapping(value = "/eqpmn/eqpmnUserReg.do", method = { RequestMethod.GET, RequestMethod.POST })
+	public String eqpmnUserReg(@ModelAttribute("eqpmnManageDto") eqpmnManageDto eqpmnManageDto, HttpServletRequest request, HttpServletResponse reponse, HttpSession session, ModelMap model) throws Exception {
+
+		model.addAttribute("pageUrl", "/eqpmn/eqpmnUserReg.jsp");
+		return "main";
+	}
 }

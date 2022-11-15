@@ -93,20 +93,39 @@
 							A.pern_no = #{pernno},
 							A.disuse_yn = #{disuseyn},
 							A.use_place = #{useplace},
-							A.remark = #{remark}
+							A.remark = #{remark},
+							A.use_yn = #{useyn}
 			WHEN NOT MATCHED THEN
-				INSERT (manage_no, code_nm, eqpmn_code, purchs_date, purchs_amount, pern_no, disuse_yn, use_place, remark)
-				VALUES (eqpmn_seq.NEXT_VALUE, #{codenm}, #{eqpmncode}, #{purchsdate}, #{purchsamount}, #{pernno}, #{disuseyn}, #{useplace}, #{remark})
+				INSERT (manage_no, code_nm, eqpmn_code, purchs_date, purchs_amount, pern_no, disuse_yn, use_place, remark, use_yn)
+				VALUES (eqpmn_seq.NEXT_VALUE, #{codenm}, #{eqpmncode}, #{purchsdate}, #{purchsamount}, #{pernno}, #{disuseyn}, #{useplace}, #{remark}, #{useyn})
 	</update>
-	
+
 	<select id="eqpmnManageList" parameterType="com.mtpms.dto.eqpmnManageDto" resultType="com.mtpms.dto.eqpmnManageDto">
-		SELECT A.code_nm, A.manage_no, A.purchs_date, A.purchs_amount, NVL(A.pern_no, '-'), A.disuse_yn, A.use_place
-		FROM pmseqpmn A
-		GROUP BY A.manage_no;
+		SELECT a.pern_no, a.pc_manage_no1, a.pc_manage_no2, a.mo_manage_no1, a.mo_manage_no2, a.ph_manage_no
+		FROM eqpmn_use_manage a, hpa100t b
+		WHERE a.pern_no = b.pern_no
+			<if test="type != null and type == 'pernno'">
+				AND a.pern_no LIKE '%' || #{keyword} || '%'
+			</if>
+			<if test="type != null and type == 'pcmanageno1'">
+				AND a.pc_manage_no1 LIKE '%' || #{keyword} || '%'
+			</if>
+			<if test="type != null and type == 'pcmanageno2'">
+				AND a.pc_manage_no2 LIKE '%' || #{keyword} || '%'
+			</if>
+			<if test="type != null and type == 'momanageno1'">
+				AND a.mo_manage_no1 LIKE '%' || #{keyword} || '%'
+			</if>
+			<if test="type != null and type == 'momanageno2'">
+				AND a.mo_manage_no2 LIKE '%' || #{keyword} || '%'
+			</if>
+			<if test="type != null and type == 'phmanageno'">
+				AND a.ph_manage_no LIKE '%' || #{keyword} || '%'
+			</if>
 	</select>
 	
 	<select id="selectEqpmnListCode" resultType="com.mtpms.dto.eqpmnManageDto">
-		SELECT A.code_nm, b.manage_no, a.code
+		SELECT A.code_nm, a.code
 		from cmmn_code_manage A, eqpmn_manage B
 		WHERE A.code = B.eqpmn_code (+)
 		AND a.group_code NOT IN ('HODITYPE')

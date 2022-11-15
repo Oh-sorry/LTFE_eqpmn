@@ -192,18 +192,18 @@
      		<div class="input-group-prepend">
        			<div class="input-group-text">사용여부</div>
      		</div>
-  		    <select class="form-control" id="useyn" name="useyn" style="width:60px">
-        		<option value="Y" selected>Y</option>
-        		<option value="N">N</option>
+  		    <select class="form-control" id="useyn" name="useyn" style="width:100px">
+        		<option value="Y" selected>사용</option>
+        		<option value="N">미사용</option>
       		</select>
    		</div>
    		<div class="input-group mb-2 mr-sm-2">
      		<div class="input-group-prepend">
        			<div class="input-group-text">폐기여부</div>
      		</div>
-  		    <select class="form-control" id="disuseyn" name="disuseyn" style="width:60px">
-        		<option value="Y">Y</option>
-        		<option value="N" selected>N</option>
+  		    <select class="form-control" id="disuseyn" name="disuseyn" style="width:100px">
+        		<option value="Y">폐기</option>
+        		<option value="N" selected>미폐기</option>
       		</select>
    		</div>
    		<div class="input-group mb-2 mr-sm-2">
