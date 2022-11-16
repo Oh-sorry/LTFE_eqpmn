@@ -77,4 +77,24 @@ public class eqpmnServiceImpl extends EgovAbstractServiceImpl implements eqpmnSe
 		
 		return list;
 	}
+	
+	public Map<String, Object> userSelect(eqpmnManageDto eqpmnManageDto) throws Exception {
+		
+		List<eqpmnManageDto> list = eqpmnDao.userSelect(eqpmnManageDto);
+		
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("resultList", list);
+		
+		return map;
+	}
+	
+	public Map<String, Object> eqpmnSelect(eqpmnManageDto eqpmnManageDto) throws Exception {
+		
+		List<eqpmnManageDto> list = eqpmnDao.eqpmnSelect(eqpmnManageDto);
+		
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("resultList", list);
+		
+		return map;
+	}
 }

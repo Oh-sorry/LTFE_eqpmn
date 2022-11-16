@@ -32,6 +32,34 @@ public class eqpmnManageDto implements Serializable{
 	private String type;
 	private String keyword;
 	
+	private String postcode;
+	private String postname;
+	private String phoneno;
+	
+	
+	public String getPostcode() {
+		return postcode;
+	}
+
+	public void setPostcode(String postcode) {
+		this.postcode = postcode;
+	}
+
+	public String getPostname() {
+		return postname;
+	}
+
+	public void setPostname(String postname) {
+		this.postname = postname;
+	}
+
+	public String getPhoneno() {
+		return phoneno;
+	}
+
+	public void setPhoneno(String phoneno) {
+		this.phoneno = phoneno;
+	}
 
 	public String getType() {
 		return type;

@@ -132,4 +132,37 @@
 		AND A.group_code IN ('EQP1')
 		GROUP BY A.code_nm
 	</select>
+	
+	<select id="userSelect" parameterType="com.mtpms.dto.eqpmnManageDto" resultType="com.mtpms.dto.eqpmnManageDto">
+		SELECT A.NAME, A.pern_no, A.post_name, A.phone_no, A.post_code
+		FROM hpa100t A
+		WHERE 1=1
+			<if test="type != null and type == 'name'">
+				AND a.name LIKE '%' || #{keyword} || '%'
+			</if>
+			<if test="type != null and type == 'pernno'">
+				AND a.pern_no LIKE '%' || #{keyword} || '%'
+			</if>
+			<if test="type != null and type == 'postname'">
+				AND a.post_name LIKE '%' || #{keyword} || '%'
+			</if>
+			<if test="type != null and type == 'phoneno'">
+				AND a.phone_no LIKE '%' || #{keyword} || '%'
+			</if>
+		ORDER BY A.NAME
+	</select>
+
+	<select id="eqpmnSelect" parameterType="com.mtpms.dto.eqpmnManageDto" resultType="com.mtpms.dto.eqpmnManageDto">
+		SELECT A.code, A.code_nm, B.manage_no, B.use_yn, C.pern_no, D.name
+		FROM cmmn_code_manage A, eqpmn_manage B, eqpmn_user_mapping C, hpa100t D
+		WHERE A.code = B.eqpmn_code
+		AND B.manage_no = C.manage_no
+		AND C.pern_no = D.pern_no
+			<if test="codenm != null and codenm != '전체'">
+				AND A.code_nm LIKE '%' || #{codenm} || '%'
+			</if>
+			<if test="useyn != null and useyn != ''">
+				AND B.use_yn = #{useyn}
+			</if>
+	</select>
 </mapper>

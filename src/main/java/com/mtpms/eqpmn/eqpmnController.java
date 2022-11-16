@@ -129,8 +129,26 @@ public class eqpmnController {
 	
 	@RequestMapping(value = "/eqpmn/eqpmnUserReg.do", method = { RequestMethod.GET, RequestMethod.POST })
 	public String eqpmnUserReg(@ModelAttribute("eqpmnManageDto") eqpmnManageDto eqpmnManageDto, HttpServletRequest request, HttpServletResponse reponse, HttpSession session, ModelMap model) throws Exception {
+		List<eqpmnManageDto> cnmList = eqpmnService.selectCnmList();
 
+		model.addAttribute("cnmList", cnmList);
 		model.addAttribute("pageUrl", "/eqpmn/eqpmnUserReg.jsp");
 		return "main";
+	}
+	
+	@RequestMapping(value = "/eqpmn/userSelect.ajax", method= { RequestMethod.POST })
+	public ModelAndView userSelect(@ModelAttribute("eqpmnManageDto") eqpmnManageDto eqpmnManageDto, HttpSession session, ModelMap model) throws Exception {
+		Map<String, Object> map = eqpmnService.userSelect(eqpmnManageDto);
+		ModelAndView modelAndView = new ModelAndView("jsonView", map);
+		
+		return modelAndView;
+	}
+	
+	@RequestMapping(value = "/eqpmn/eqpmnSelect.ajax", method= { RequestMethod.POST })
+	public ModelAndView eqpmnSelect(@ModelAttribute("eqpmnManageDto") eqpmnManageDto eqpmnManageDto, HttpSession session, ModelMap model) throws Exception {
+		Map<String, Object> map = eqpmnService.eqpmnSelect(eqpmnManageDto);
+		ModelAndView modelAndView = new ModelAndView("jsonView", map);
+		
+		return modelAndView;
 	}
 }
