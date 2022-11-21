@@ -73,25 +73,54 @@ public class eqpmnController {
 		
 		return modelAndView;
 	}
-	
+	// 장비 - codenm
 	@RequestMapping(value="/eqpmn/selectEqpmnCode.ajax", method= {RequestMethod.GET, RequestMethod.POST})
 	public @ResponseBody List<eqpmnManageDto> selectEqpmnCode(@ModelAttribute("eqpmnManageDto") eqpmnManageDto eqpmnManageDto,HttpSession session, ModelMap model) throws Exception {
 		
 		List<eqpmnManageDto> list = eqpmnService.selectEqpmnCode();
 		return list;
 	}
-	
+	// 사용장소 - useplace
 	@RequestMapping(value="/eqpmn/selectEqpmnCode2.ajax", method= {RequestMethod.GET, RequestMethod.POST})
 	public @ResponseBody List<eqpmnManageDto> selectEqpmnCode2(@ModelAttribute("eqpmnManageDto") eqpmnManageDto eqpmnManageDto,HttpSession session, ModelMap model) throws Exception {
 		
 		List<eqpmnManageDto> list = eqpmnService.selectEqpmnCode2();
 		return list;
 	}
-	
+	// 사용여부 - useyn 
+	@RequestMapping(value="/eqpmn/selectEqpmnCode3.ajax", method= {RequestMethod.GET, RequestMethod.POST})
+	public @ResponseBody List<eqpmnManageDto> selectEqpmnCode3(@ModelAttribute("eqpmnManageDto") eqpmnManageDto eqpmnManageDto,HttpSession session, ModelMap model) throws Exception {
+		
+		List<eqpmnManageDto> list = eqpmnService.selectEqpmnCode3();
+		return list;
+	}
+	// 폐기여부 - disuseyn
+	@RequestMapping(value="/eqpmn/selectEqpmnCode4.ajax", method= {RequestMethod.GET, RequestMethod.POST})
+	public @ResponseBody List<eqpmnManageDto> selectEqpmnCode4(@ModelAttribute("eqpmnManageDto") eqpmnManageDto eqpmnManageDto,HttpSession session, ModelMap model) throws Exception {
+		
+		List<eqpmnManageDto> list = eqpmnService.selectEqpmnCode4();
+		return list;
+	}
 	
 	@RequestMapping(value="/eqpmn/eqpmnManageUpdate.ajax",  method={RequestMethod.POST})
 	public ResponseEntity<String> eqpmnManageUpdate(@ModelAttribute("eqpmnManageDto") eqpmnManageDto eqpmnManageDto, HttpSession session, Model model) throws Exception {
 		int rtn = eqpmnService.eqpmnUpdate(eqpmnManageDto);
+		
+		logger.info("rtn =>" + rtn);
+		
+		ResponseEntity<String> resRtn = null;
+		if(rtn ==1 ) {
+			resRtn = new ResponseEntity<>(HttpStatus.OK);
+		} else {
+			resRtn = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+		
+		return resRtn;
+	}
+	
+	@RequestMapping(value="/eqpmn/eqpmnManageDelete.ajax",  method={RequestMethod.POST})
+	public ResponseEntity<String> eqpmnManageDelete(@ModelAttribute("eqpmnManageDto") eqpmnManageDto eqpmnManageDto, HttpSession session, Model model) throws Exception {
+		int rtn = eqpmnService.eqpmnDelete(eqpmnManageDto);
 		
 		logger.info("rtn =>" + rtn);
 		
@@ -150,5 +179,27 @@ public class eqpmnController {
 		ModelAndView modelAndView = new ModelAndView("jsonView", map);
 		
 		return modelAndView;
+	}
+	
+	@RequestMapping(value="/eqpmn/userManageUpdate.ajax",  method={RequestMethod.POST})
+	public ResponseEntity<String> userManageUpdate(@ModelAttribute("eqpmnManageDto") eqpmnManageDto eqpmnManageDto, HttpSession session, Model model) throws Exception {
+		int rtn = eqpmnService.userManageUpdate(eqpmnManageDto);
+		
+		int rtn2 = eqpmnService.userMappingUpdate(eqpmnManageDto);
+		
+		int rtn3 = eqpmnService.eqpmnMappingUpdate(eqpmnManageDto);
+		
+		logger.info("rtn =>" + rtn);
+		logger.info("rtn2 =>" + rtn2);
+		logger.info("rtn3 =>" + rtn3);
+		
+		ResponseEntity<String> resRtn = null;
+		if(rtn ==1) {
+			resRtn = new ResponseEntity<>(HttpStatus.OK);
+		} else {
+			resRtn = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+		
+		return resRtn;
 	}
 }

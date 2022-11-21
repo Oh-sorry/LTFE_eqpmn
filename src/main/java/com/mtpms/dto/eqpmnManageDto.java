@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 public class eqpmnManageDto implements Serializable{
 
 	/**
@@ -22,13 +24,14 @@ public class eqpmnManageDto implements Serializable{
 	private String disuseyn;
 	private String eqpmncode;
 	private String remark;
-	
+	private String code;
+
 	private String momanageno1;
 	private String momanageno2;
 	private String pcmanageno1;
 	private String pcmanageno2;
 	private String phmanageno;
-	
+
 	private String type;
 	private String keyword;
 	
@@ -36,7 +39,23 @@ public class eqpmnManageDto implements Serializable{
 	private String postname;
 	private String phoneno;
 	
+	private String cmospw;
+	private String ssoid;
+	private String ssopw;
+
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	private Date inputdate;
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	private Date expdate;
 	
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
 	public String getPostcode() {
 		return postcode;
 	}
@@ -205,10 +224,49 @@ public class eqpmnManageDto implements Serializable{
 		this.phmanageno = phmanageno;
 	}
 
+	public Date getInputdate() {
+		return inputdate;
+	}
+
+	public void setInputdate(Date inputdate) {
+		this.inputdate = inputdate;
+	}
+
+	public Date getExpdate() {
+		return expdate;
+	}
+
+	public void setExpdate(Date expdate) {
+		this.expdate = expdate;
+	}
+
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
-	
-	
+
+	public String getCmospw() {
+		return cmospw;
+	}
+
+	public void setCmospw(String cmospw) {
+		this.cmospw = cmospw;
+	}
+
+	public String getSsoid() {
+		return ssoid;
+	}
+
+	public void setSsoid(String ssoid) {
+		this.ssoid = ssoid;
+	}
+
+	public String getSsopw() {
+		return ssopw;
+	}
+
+	public void setSsopw(String ssopw) {
+		this.ssopw = ssopw;
+	}
+
 	
 }

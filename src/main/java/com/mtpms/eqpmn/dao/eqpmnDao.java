@@ -36,6 +36,10 @@ public class eqpmnDao extends EgovAbstractMapper{
 		return update("eqpmnDaoSql.eqpmnUpdate", eqpmnManageDto);
 	}
 
+	public int eqpmnDelete(eqpmnManageDto eqpmnManageDto) {
+		return delete("eqpmnDaoSql.eqpmnDelete", eqpmnManageDto);
+	}
+
 	public List<eqpmnManageDto> eqpmnManageList(eqpmnManageDto eqpmnManageDto) {
 		return selectList("eqpmnDaoSql.eqpmnManageList", eqpmnManageDto);
 	}
@@ -51,4 +55,25 @@ public class eqpmnDao extends EgovAbstractMapper{
 	public List<eqpmnManageDto> eqpmnSelect(eqpmnManageDto eqpmnManageDto) {
 		return selectList("eqpmnDaoSql.eqpmnSelect", eqpmnManageDto);
 	}
+
+	public List<eqpmnManageDto> selectEqpmnCode3() {
+		return selectList("eqpmnDaoSql.selectEqpmnCode3");
+	}
+
+	public List<eqpmnManageDto> selectEqpmnCode4() {
+		return selectList("eqpmnDaoSql.selectEqpmnCode4");
+	}
+
+	public int userManageUpdate(eqpmnManageDto eqpmnManageDto) {
+		return update("eqpmnDaoSql.userManageUpdate", eqpmnManageDto);
+	}
+
+	public int userMappingUpdate(eqpmnManageDto eqpmnManageDto) {
+		return update("eqpmnDaoSql.userMappingUpdate", eqpmnManageDto);
+	}
+
+	public int eqpmnMappingUpdate(eqpmnManageDto eqpmnManageDto) {
+		return update("eqpmnDaoSql.eqpmnMappingUpdate", eqpmnManageDto);
+	}
+
 }

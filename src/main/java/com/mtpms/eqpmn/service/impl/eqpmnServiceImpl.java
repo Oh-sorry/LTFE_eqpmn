@@ -43,6 +43,20 @@ public class eqpmnServiceImpl extends EgovAbstractServiceImpl implements eqpmnSe
 		return list;
 	}
 	
+	public List<eqpmnManageDto> selectEqpmnCode3() throws Exception {
+		
+		List<eqpmnManageDto> list = eqpmnDao.selectEqpmnCode3();
+		
+		return list;
+	}
+	
+	public List<eqpmnManageDto> selectEqpmnCode4() throws Exception {
+		
+		List<eqpmnManageDto> list = eqpmnDao.selectEqpmnCode4();
+		
+		return list;
+	}
+	
 	public List<eqpmnManageDto> selectEqpmnCodeList() throws Exception {
 		List<eqpmnManageDto> list = eqpmnDao.selectEqpmnCodeList();
 		
@@ -57,6 +71,12 @@ public class eqpmnServiceImpl extends EgovAbstractServiceImpl implements eqpmnSe
 	
 	public int eqpmnUpdate(eqpmnManageDto eqpmnManageDto) throws Exception {
 		int rtn = eqpmnDao.eqpmnUpdate(eqpmnManageDto);
+		
+		return rtn;
+	}
+	
+	public int eqpmnDelete(eqpmnManageDto eqpmnManageDto) throws Exception {
+		int rtn = eqpmnDao.eqpmnDelete(eqpmnManageDto);
 		
 		return rtn;
 	}
@@ -96,5 +116,23 @@ public class eqpmnServiceImpl extends EgovAbstractServiceImpl implements eqpmnSe
 		map.put("resultList", list);
 		
 		return map;
+	}
+	
+	public int userManageUpdate(eqpmnManageDto eqpmnManageDto) throws Exception {
+		int rtn = eqpmnDao.userManageUpdate(eqpmnManageDto);
+		
+		return rtn;
+	}
+	
+	public int userMappingUpdate(eqpmnManageDto eqpmnManageDto) throws Exception {
+		int rtn2 = eqpmnDao.userMappingUpdate(eqpmnManageDto);
+		
+		return rtn2;
+	}
+	
+	public int eqpmnMappingUpdate(eqpmnManageDto eqpmnManageDto) throws Exception {
+		int rtn3 = eqpmnDao.eqpmnMappingUpdate(eqpmnManageDto);
+		
+		return rtn3;
 	}
 }

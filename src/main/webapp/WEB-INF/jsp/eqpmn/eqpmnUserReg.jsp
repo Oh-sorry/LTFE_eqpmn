@@ -5,16 +5,20 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 
 <script language="javascript">
+	/* 삭제버튼 X 시작 */
 	function resetDate() {
 		$('[id=regForm] #expdate').val('');
 		$('[id=regForm] #inputdate').val('');
 	}
-	function resetInput() {
-		$("#reset").click(function () {
-			$(":text").val('');
-		})
+	function resetInput(arg0) {
+		var resetData = $(arg0).attr('id');
+		
+		$('[id=regForm] #'+resetData).val('');
 		
 	}
+	/* 삭제버튼 X 끝 */
+	
+	/* 사용자 조회 시작 */
 	function initUser() {
 		$('#userForm').each(function() { this.reset();});
 		$('[id=userForm] #pernno').val('0');
@@ -46,7 +50,7 @@
             rownumbers : true,
 		   	rowNum: 9007199254740992,
 		   	width: 460,
-            height: 450,
+            height: 400,
 		   	beforeRequest : function () {loadingOn();},
 		   	loadComplete: function (data) {if($('#gridList1').getGridParam("records")== 0) alert('조회된 내용이 없습니다.');loadingOff();}
 		});
@@ -82,21 +86,22 @@
 			    }
 			}
         });
-		$('input[id=pernno]').attr('value', rowData.name+"("+rowData.pernno+")");
+		$('input[id=pernno]').attr('value', rowData.pernno);
+		$('input[id=name]').attr('value', rowData.name);
+		/* $('input[id=pernno]').attr('value', rowData.name+"("+rowData.pernno+")"); */
 		$('#modalpopup').modal('hide');
 	}
-	//수탁망pc 선택
-	function initEqpmn() {
+	/* 사용자 조회 끝 */
+	
+	/* 장비 선택 시작 */
+	function initEqpmn(arg0) {
+		
+		var btnId = $(arg0).attr('id');
+		var btnVal = $(arg0).val();
+		
 		$('#eqpmnForm').each(function() { this.reset();});
-		$('[id=eqpmnForm] #codenm').val('수탁망PC');
-		$('#btn-eqpmn').attr("data-target","#modalpopup1");
-		goSearch1();
-	}
-	//인터넷망pc 선택
-	function initEqpmn2() {
-		$('#eqpmnForm').each(function() { this.reset();});
-		$('[id=eqpmnForm] #codenm').val('인터넷망PC');
-		$('#btn-eqpmn2').attr("data-target","#modalpopup1");
+		$('[id=eqpmnForm] #eqpmncode').val(btnVal);
+		$('#'+btnId).attr("data-target","#modalpopup1");
 		goSearch1();
 	}
 
@@ -115,7 +120,7 @@
 		   	url:"${pageContext.request.contextPath}/eqpmn/eqpmnSelect.ajax",
 		   	mtype: "POST",
 			datatype: "json",
-			postData : {'codenm':'0'},
+			/* postData : {'codenm':'0'}, */
 			jsonReader : {
 				root: "resultList",
 				repeatitems: false
@@ -123,11 +128,20 @@
 			loadtext : '조회 중 입니다.',
 			shrinkToFit:false,
 			colModel:[
-				{label:'장비코드', name:'code', hidden:true},
+				{label:'장비코드', name:'eqpmncode', hidden:true},
 				{label:'장비명', name:'codenm', width:100},
 				{label:'관리번호', name:'manageno', width:150},
 				{label:'사용여부', name:'useyn', width:80},
-				{label:'사용자', name:'pernno', width:120}
+				{label:'사용자', name:'pernno', width:120},
+				{label:'이름', name:'name', hidden:true},
+				{label:'수탁망PC', name:'pcmanageno1', hidden:true},
+				{label:'인터넷망PC', name:'pcmanageno2', hidden:true},
+				{label:'모니터1', name:'momanageno1', hidden:true},
+				{label:'모니터2', name:'momanageno2', hidden:true},
+				{label:'전화기', name:'phmanageno', hidden:true},
+				{label:'투입일자', name:'inputdate', hidden:true},
+				{label:'철수일자', name:'expdate', hidden:true},
+				{label:'사용여부', name:'useyn', hidden:true}
 		   	],
 		   	loadonce: true,
 		   	sortable : true,
@@ -142,6 +156,7 @@
 
 		/* $("#gridList1").setGridWidth($('#content').width()-25, true); */
 		goMenuSelect();
+		goMenuSelect3();
 	});
 	function goMenuSelect() {
 		$.ajax({
@@ -152,10 +167,10 @@
             	 if(data != null) {
             		 selectoption = "<option value=''>전체</option>";
                      $.each(data , function (i, item) {
-                    	 selectoption += "<option value= " + item.codenm + ">" + item.codenm + "</option>";
+                    	 selectoption += "<option value= " + item.code + ">" + item.codenm + "</option>";
                      });
-                     $('[id=eqpmnForm] #codenm option').remove();
-                     $('[id=eqpmnForm] #codenm').append(selectoption);
+                     $('[id=eqpmnForm] #eqpmncode option').remove();
+                     $('[id=eqpmnForm] #eqpmncode').append(selectoption);
                      
             	 }
              },
@@ -164,7 +179,27 @@
              }
          });
 	}
-	
+	function goMenuSelect3() {
+		$.ajax({
+             type : "POST",
+             url : "${pageContext.request.contextPath}/eqpmn/selectEqpmnCode3.ajax",
+             async: false,
+             success : function(data){
+            	 if(data != null) {
+            		 selectoption = "<option value=''>전체</option>";
+                     $.each(data , function (i, item) {
+                    	 selectoption += "<option value= " + item.useyn + ">" + item.useyn + "</option>";
+                     });
+                     $('[id=eqpmnForm] #useyn option').remove();
+                     $('[id=eqpmnForm] #useyn').append(selectoption);
+                     
+            	 }
+             },
+             error : function(XMLHttpRequest, textStatus, errorThrown){
+                 alert("작업 중 오류가 발생하였습니다.")
+             }
+         });
+	}
 	function eqpmnSelect() {
 		var rowid = $("#gridList2").getGridParam( "selrow" );
 		var moData = $('input#momanageno1').val();
@@ -202,6 +237,56 @@
 		}
 		$('#modalpopup1').modal('hide');
 	}
+	/* 장비 선택 끝 */
+	
+	$(document).ready(function(){
+		$('#btn_close').click(function () {
+			$('#regForm').attr('action', "${pageContext.request.contextPath}/eqpmn/eqpmnManageList.do");
+			$('#regForm').submit();
+	    });
+    });
+	
+	function goSave() {
+
+		if ($('[id=regForm] #pernno').val().trim() == '') {
+			alert("사원명을 선택 하세요");
+			$('[id=regForm] #pernno').focus();
+			return;
+		}
+
+		if($('[id=regForm] #pcmanageno1').val().trim() == '' && 
+			$('[id=regForm] #pcmanageno2').val().trim() == '' && 
+			$('[id=regForm] #momanageno1').val().trim() == '' && 
+			$('[id=regForm] #momanageno2').val().trim() == '' && 
+			$('[id=regForm] #phmanageno').val().trim() == '') {
+			alert("장비를 선택 하세요");
+			return;
+		}
+		var formData = $('#regForm').serializeArray();
+		
+		alert($('input[id=pernno]').val());
+		
+		loadingOn();
+
+		$.ajax({
+             type : "POST",
+             url : "${pageContext.request.contextPath}/eqpmn/userManageUpdate.ajax",
+             data : formData,
+             async: false,
+             success : function(data){
+            	 if(data != null) {
+            	 	alert("정상적으로 처리되었습니다.")
+                 	goSearch();
+            	 	goMenuSelect();
+	           		loadingOff();
+            	 }
+             },
+             error : function(XMLHttpRequest, textStatus, errorThrown){
+                 alert("작업 중 오류가 발생하였습니다.")
+                 loadingOff();
+             }
+         });
+	}
 </script>
 
 <div class="container float-left">
@@ -211,6 +296,7 @@
 	<p></p>
 </div>
 	<form id="regForm" name="regForm">
+		<input type="hidden" id="useyn" name="useyn" value="Y">
 		<table class="table table-bordered" border="1" width ="100%" height="740" align = "center" style="font-size: 16px;" >
 			<tr>
 				<td colspan="20%" align="center" bgcolor="#E9ECEF">
@@ -218,9 +304,10 @@
 				</td>
 				<td colspan="80%">
 					<div class="input-group mb-2 mr-sm-2">
-						<input type="text" class="form-cotrol" id="pernno" name="pernno" maxlength="100" value="" readonly>
+						<input type="text" class="form-cotrol" id="name" name="name" readonly>
+						<input type="text" class="form-cotrol" id="pernno" name="pernno" maxlength="100" readonly>
 						<button type="button" class="btn btn-sm btn-info" id="btn-user" name="btn-user" data-toggle="modal" onclick="javascript:initUser()">사용자조회</button>
-						<button type="button" class="btn btn-sm btn-secondary" id="reset" onclick="javascript:resetInput()">X</button>
+						<button type="button" class="btn btn-sm btn-secondary" id="pernno" onclick="javascript:resetInput(this)">X</button>
 					</div>
 				</td>
 			</tr>
@@ -247,8 +334,8 @@
 				<td colspan="35%">
 					<div class="input-group mb-2 mr-sm-2">
 						<input type="text" class="form-cotrol" id="pcmanageno1" name="pcmanageno1" maxlength="100" readonly>
-						<button type="button" class="btn btn-sm btn-info" id="btn-eqpmn" data-toggle="modal" onclick="javascript:initEqpmn()">장비검색</button>
-						<button type="button" class="btn btn-sm btn-secondary"  onclick="javascript:resetInput()">X</button>
+						<button type="button" class="btn btn-sm btn-info" id="btn-eqpmn" value="PC01" data-toggle="modal" onclick="javascript:initEqpmn(this)">장비검색</button>
+						<button type="button" class="btn btn-sm btn-secondary" id="pcmanageno1" onclick="javascript:resetInput(this)">X</button>
 					</div>
 				</td>
 				<td colspan="10%" align="center" bgcolor="#E9ECEF">
@@ -256,7 +343,7 @@
 				</td>
 				<td colspan="35%">
 					<div class="input-group mb-2 mr-sm-2">
-						<input type="text" class="form-cotrol" id="cmospw" name="cmospw" maxlength="100">
+<!-- 						<input type="text" class="form-cotrol" id="cmospw" name="cmospw" maxlength="100"> -->
 					</div>
 				</td>
 			</tr>
@@ -266,7 +353,7 @@
 				</td>
 				<td colspan="35%">
 					<div class="input-group mb-2 mr-sm-2">
-						<input type="text" class="form-cotrol" id="ssopw" name="ssopw" maxlength="100">
+<!-- 						<input type="text" class="form-cotrol" id="ssopw" name="ssopw" maxlength="100"> -->
 					</div>
 				</td>
 				<td colspan="10%" align="center" bgcolor="#E9ECEF">
@@ -274,7 +361,7 @@
 				</td>
 				<td colspan="35%">
 					<div class="input-group mb-2 mr-sm-2">
-						<input type="text" class="form-cotrol" id="ssopw" name="ssopw" maxlength="100">
+<!-- 						<input type="text" class="form-cotrol" id="ssopw" name="ssopw" maxlength="100"> -->
 					</div>
 				</td>
 			</tr>
@@ -288,8 +375,8 @@
 				<td colspan="35%">
 					<div class="input-group mb-2 mr-sm-2">
 						<input type="text" class="form-cotrol" id="pcmanageno2" name="pcmanageno2" maxlength="100" readonly>
-						<button type="button" class="btn btn-sm btn-info" id="btn-eqpmn2" data-toggle="modal" onclick="javascript:initEqpmn2()">장비검색</button>
-						<button type="button" class="btn btn-sm btn-secondary" onclick="javascript:resetInput()">X</button>
+						<button type="button" class="btn btn-sm btn-info" id="btn-eqpmn2" value="PC02" data-toggle="modal" onclick="javascript:initEqpmn(this)">장비검색</button>
+						<button type="button" class="btn btn-sm btn-secondary" id="pcmanageno2" onclick="javascript:resetInput(this)">X</button>
 					</div>
 				</td>
 				<td colspan="10%" align="center" bgcolor="#E9ECEF">
@@ -297,7 +384,7 @@
 				</td>
 				<td colspan="35%">
 					<div class="input-group mb-2 mr-sm-2">
-						<input type="text" class="form-cotrol" id="cmospw" name="cmospw" maxlength="100">
+<!-- 						<input type="text" class="form-cotrol" id="cmospw" name="cmospw" maxlength="100"> -->
 					</div>
 				</td>
 			</tr>
@@ -307,7 +394,7 @@
 				</td>
 				<td colspan="35%">
 					<div class="input-group mb-2 mr-sm-2">
-						<input type="text" class="form-cotrol" id="ssopw" name="ssopw" maxlength="100">
+<!-- 						<input type="text" class="form-cotrol" id="ssopw" name="ssopw" maxlength="100"> -->
 					</div>
 				</td>
 				<td colspan="10%" align="center" bgcolor="#E9ECEF">
@@ -315,7 +402,7 @@
 				</td>
 				<td colspan="35%">
 					<div class="input-group mb-2 mr-sm-2">
-						<input type="text" class="form-cotrol" id="ssopw" name="ssopw" maxlength="100">
+<!-- 						<input type="text" class="form-cotrol" id="ssopw" name="ssopw" maxlength="100"> -->
 					</div>
 				</td>
 			</tr>
@@ -326,8 +413,8 @@
 				<td colspan="35%">
 					<div class="input-group mb-2 mr-sm-2">
 						<input type="text" class="form-cotrol" id="momanageno1" name="momanageno1" maxlength="100" readOnly >
-						<button type="button" class="btn btn-sm btn-info" id="btn-user" data-toggle="modal" onclick="javascript:initEqpmn()">장비검색</button>
-						<button type="button" class="btn btn-sm btn-secondary" onclick="javascript:resetInput()">X</button>
+						<button type="button" class="btn btn-sm btn-info" id="btn-eqpmn3" value="MO01" data-toggle="modal" onclick="javascript:initEqpmn(this)">장비검색</button>
+						<button type="button" class="btn btn-sm btn-secondary" id="momanageno1" onclick="javascript:resetInput(this)">X</button>
 					</div>
 				</td>
 				<td colspan="10%" align="center" bgcolor="#E9ECEF">
@@ -336,8 +423,8 @@
 				<td colspan="35%">
 					<div class="input-group mb-2 mr-sm-2">
 						<input type="text" class="form-cotrol" id="momanageno2" name="momanageno2" maxlength="100" readOnly>
-						<button type="button" class="btn btn-sm btn-info" id="btn-user" data-toggle="modal" onclick="javascript:initEqpmn()">장비검색</button>
-						<button type="button" class="btn btn-sm btn-secondary" onclick="javascript:resetInput()">X</button>
+						<button type="button" class="btn btn-sm btn-info" id="btn-eqpmn4" value="MO01" data-toggle="modal" onclick="javascript:initEqpmn(this)">장비검색</button>
+						<button type="button" class="btn btn-sm btn-secondary" id="momanageno2" onclick="javascript:resetInput(this)">X</button>
 					</div>
 				</td>
 			</tr>
@@ -348,17 +435,16 @@
 				<td colspan="80%">
 					<div class="input-group mb-2 mr-sm-2">
 						<input type="text" class="form-cotrol" id="phmanageno" name="phmanageno" maxlength="100" readOnly>
-						<button type="button" class="btn btn-sm btn-info" id="btn-user" data-toggle="modal" onclick="javascript:initEqpmn()">장비검색</button>
-						<button type="button" class="btn btn-sm btn-secondary" onclick="javascript:resetInput()">X</button>
+						<button type="button" class="btn btn-sm btn-info" id="btn-eqpmn5"  value="PH01" data-toggle="modal" onclick="javascript:initEqpmn(this)">장비검색</button>
+						<button type="button" class="btn btn-sm btn-secondary" id="phmanageno" onclick="javascript:resetInput(this)">X</button>
 					</div>
 				</td>
 			</tr>
 		</table>
-		
 	</form>
 	<div class="float-right">
 		<button type="button" class="btn btn-sm btn-primary" onclick="javascript:goSave()"><i class="bi bi-save"></i> 저장</button>
-		<button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal"><i class="bi bi-x"></i> 뒤로</button>
+		<button type="button" class="btn btn-sm btn-secondary" id="btn_close" name="btn_close"><i class="bi bi-x"></i> 뒤로</button>
 	</div>
 	
 <!-- 사용자 조회 popup 시작-->
@@ -372,26 +458,23 @@
         </button>
       </div>
       <div class="modal-body">
-		<form id="userForm" name="userForm">
-		<div class="input-group">
-     		<div class="input-group-prepend">
-       			<div class="input-group-text">검색 </div>
-     		</div>
-  		    <select class="form-control" id="type" name="type" style="width:50px">
-  		    	<option value="name" selected> 성명</option>
-  		    	<option value="pernno"> 사번</option>
-  		    	<option value="postname"> 직위</option>
-  		    	<option value="phoneno"> 전화번호</option>
-  		    </select>
-   		</div>
-   		<div class="input-group mb-2 mr-sm-2">
-     		<input type="text" class="form-control" id="keyword" name="keyword" style="width:10px">
-   		</div>
-		<button type="button" class="btn btn-sm btn-info mb-2" onclick="javascript:goSearch()"><i class="bi bi-search"></i> 조회</button>
-			<p></p>
-				<table id="gridList1"></table>
-			<p></p>
+		<form class="form-inline" id="userForm" name="userForm">
+				<div class="form-row">
+		  	  &emsp;<select class="form-control" id="type" name="type">
+		  		    	<option value="name" selected> 성명</option>
+		  		    	<option value="pernno"> 사번</option>
+		  		    	<option value="postname"> 직위</option>
+		  		    	<option value="phoneno"> 전화번호</option>
+		  		    </select>
+		  		    <div class="form-row">
+			     		&nbsp;<input type="text" class="form-control" id="keyword" name="keyword">
+			   			&nbsp;<button type="button" class="btn btn-sm btn-info mb-2" onclick="javascript:goSearch()"><i class="bi bi-search"></i> 조회</button>
+			   		</div>
+		   		</div>
 		</form>
+		<p></p>
+			<table id="gridList1"></table>
+		<p></p>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-sm btn-primary" onclick="javascript:userSelect()"><i class="bi bi-save"></i> 저장</button>
@@ -413,30 +496,38 @@
         </button>
       </div>
       <div class="modal-body">
-		<form id="eqpmnForm" name="eqpmnForm">
+		<form class="form-inline" id="eqpmnForm" name="eqpmnForm">
    		  <div class="input-group">
-     		<div class="input-group-prepend">
-       			<div class="input-group-text">장비명 </div>
-     		</div>
-			<select class="form-control" id="codenm" name="codenm">
-				<c:forEach var="cnmList" items="${cnmList}" varStatus="status">
-        			<option value="${cnmList.codenm}">${cnmList.codenm}</option>
-      			</c:forEach>
-			</select>
-			<div class="input-group-prepend">
-       			<div class="input-group-text">사용여부</div>
-     		</div>
-			<select class="form-control" id="useyn" name="useyn">
-				<c:forEach var="cnmList" items="${cnmList}" varStatus="status">
-        			<option value="${cnmList.useyn}">${cnmList.useyn}</option>
-      			</c:forEach>
-			</select>
-		  </div>
-		<button type="button" class="btn btn-sm btn-info mb-2" onclick="javascript:goSearch1()"><i class="bi bi-search"></i> 조회</button>
-			<p></p>
-				<table id="gridList2"></table>
-			<p></p>
+   		  	<div class="form-row">
+   		  		<div class="form-row">
+		     		<div class="input-group-prepend">
+		       			&emsp;<div class="input-group-text">장비명 </div>
+		     		</div>
+					<select class="form-control" id="eqpmncode" name="eqpmncode">
+						<c:forEach var="cnmList" items="${cnmList}" varStatus="status">
+		        			<option value="${cnmList.code}">${cnmList.codenm}</option>
+		      			</c:forEach>
+					</select>
+				</div>
+				<div class="form-row">
+					<div class="input-group-prepend">
+		       			&emsp;<div class="input-group-text">사용여부</div>
+		     		</div>
+					<select class="form-control" id="useyn" name="useyn">
+		  		    	<c:forEach var="cnmList" items="${cnmList}" varStatus="status">
+		        			<option value="${cnmList.useyn}">${cnmList.useyn}</option>
+		      			</c:forEach>
+					</select>
+				</div>
+				&emsp;<button type="button" class="btn btn-sm btn-info mb-2" onclick="javascript:goSearch1()"><i class="bi bi-search"></i> 조회</button>
+			  </div>
+			  
+		</div>
+			
 		</form>
+		<p></p>
+			<table id="gridList2"></table>
+		<p></p>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-sm btn-primary" onclick="javascript:eqpmnSelect()"><i class="bi bi-save"></i> 저장</button>

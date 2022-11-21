@@ -10,7 +10,7 @@
 		   	url:"${pageContext.request.contextPath}/eqpmn/eqpmnManage.ajax",
 		   	mtype: "POST",
 			datatype: "json",
-			postData : {'codenm':'0'},
+			/* postData : {'codenm':''}, */
 			jsonReader : {
 				root: "resultList",
 				repeatitems: false
@@ -18,13 +18,12 @@
 			loadtext : '조회 중 입니다.',
 			shrinkToFit:false,
 			colModel:[
-				{label:'사번', name:'pernno', hidden:true},
-				{label:'mac주소', name:'eqpmncode', hidden:true},
+				{label:'장비코드', name:'eqpmncode', hidden:true},
 		   		{label:'장비명', name:'codenm', width:30},
 		   		{label:'관리번호', name:'manageno', width:30},
 		   		{label:'구매일', name:'purchsdate', width:30},
 		   		{label:'구매금액', name:'purchsamount', width:30},
-		   		{label:'사용자 ', name:'name', width:20},
+		   		{label:'사용자 ', name:'pernno', width:20},
 		   		{label:'사용여부', name:'useyn', hidden:true},
 		   		{label:'폐기여부', name:'disuseyn', width:20},
 		   		{label:'사용장소', name:'useplace', width:30},
@@ -44,13 +43,42 @@
 		
 		goMenuSelect();
 		goMenuSelect2();
+		goMenuSelect3();
+		goMenuSelect4();
+	
 	});
+
+	
 	
 	function initData() {
 		$('#inputForm').each(function() { this.reset();});
-		$('[id=inputForm] #codenm').val('0');
+		$('[id=inputForm] #eqpmncode').val('');
 		$('#btn_input').attr("data-target","#modalpopup");
+		
 	}
+	
+	function dataSelect() {
+		var rowid = $("#gridList1").getGridParam( "selrow" );
+
+		if (rowid == null || rowid < 1) {
+			alert("수정할 데이터를 선택하세요");
+			return;
+		}
+
+		var rowData = $("#gridList1").getRowData(rowid);
+		var formData = $('#inputForm').serializeArray();
+
+		jQuery.each(formData, function() {
+			for(key in rowData) {
+			    if (key == this.name) {
+			    	$('[id=inputForm] #'+this.name).val(rowData[key]);
+			    }
+			}
+        });
+
+		$('#btn_update').attr("data-target","#modalpopup");
+	}
+	
 	function goSearch() {
 		var formData = $('#searchForm').serializeArray();
 		
@@ -60,6 +88,43 @@
 			             }).trigger("reloadGrid");
 
 	}
+	
+	function goDelete() {
+		var rowid = $("#gridList1").getGridParam( "selrow" );
+
+		if (rowid == null || rowid < 1) {
+			alert("삭제할 데이터를 선택하세요");
+			return;
+		}
+
+		var rowData = $("#gridList1").getRowData(rowid);
+
+		if (!confirm("정말로 삭제하시겠습니까?")) {
+			return;
+		}
+
+		loadingOn();
+
+		$.ajax({
+             type : "POST",
+             url : "${pageContext.request.contextPath}/eqpmn/eqpmnManageDelete.ajax",
+             data : rowData,
+             async: false,
+             success : function(data){
+            	 if(data != null) {
+            	 	alert("정상적으로 처리되었습니다.")
+                 	goSearch();
+	           		goMenuSelect();
+	           		loadingOff();
+            	 }
+             },
+             error : function(XMLHttpRequest, textStatus, errorThrown){
+                 alert("작업 중 오류가 발생하였습니다.")
+                 loadingOff();
+             }
+         });
+	}
+	
 	function goMenuSelect() {
 		$.ajax({
              type : "POST",
@@ -69,10 +134,10 @@
             	 if(data != null) {
             		 selectoption = "<option value=''>전체</option>";
                      $.each(data , function (i, item) {
-                    	 selectoption += "<option value= " + item.codenm + ">" + item.codenm + "</option>";
+                    	 selectoption += "<option value= " + item.eqpmncode + ">" + item.codenm + "</option>";
                      });
-                     $('[id=searchForm] #codenm option').remove();
-                     $('[id=searchForm] #codenm').append(selectoption);
+                     $('[id=searchForm] #eqpmncode option').remove();
+                     $('[id=searchForm] #eqpmncode').append(selectoption);
                      
             	 }
              },
@@ -102,19 +167,60 @@
              }
          });
 	}
-	
+	function goMenuSelect3() {
+		$.ajax({
+             type : "POST",
+             url : "${pageContext.request.contextPath}/eqpmn/selectEqpmnCode3.ajax",
+             async: false,
+             success : function(data){
+            	 if(data != null) {
+            		 selectoption = "<option value=''>전체</option>";
+            		    $.each(data , function (i, item) {
+            		   	 selectoption += "<option value=" + item.useyn + ">" + item.useyn + "</option>";
+            		    });
+            		    $('[id=searchForm] #useyn option').remove();
+            		    $('[id=searchForm] #useyn').append(selectoption);
+                     
+            	 }
+             },
+             error : function(XMLHttpRequest, textStatus, errorThrown){
+                 alert("작업 중 오류가 발생하였습니다.")
+             }
+         });
+	}
+	function goMenuSelect4() {
+		$.ajax({
+             type : "POST",
+             url : "${pageContext.request.contextPath}/eqpmn/selectEqpmnCode4.ajax",
+             async: false,
+             success : function(data){
+            	 if(data != null) {
+            		 selectoption = "<option value=''>전체</option>";
+            		    $.each(data , function (i, item) {
+            		   	 selectoption += "<option value=" + item.disuseyn + ">" + item.disuseyn + "</option>";
+            		    });
+            		    $('[id=searchForm] #disuseyn option').remove();
+            		    $('[id=searchForm] #disuseyn').append(selectoption);
+                     
+            	 }
+             },
+             error : function(XMLHttpRequest, textStatus, errorThrown){
+                 alert("작업 중 오류가 발생하였습니다.")
+             }
+         });
+	}
 	function goSave() {
 
-		/* if ($('[id=inputForm] #codenm').val().trim() == '') {
-			alert("장비명을 선택 하세요");
-			$('[id=inputForm] #codenm').focus();
-			return;
-		} */
 		if ($('[id=inputForm] #eqpmncode').val() == null) {
-			alert("mac주소를 선택 하세요");
+			alert("장비명을 선택 하세요");
 			$('[id=inputForm] #eqpmncode').focus();
 			return;
 		}
+		/* if ($('[id=inputForm] #eqpmncode').val() == null) {
+			alert("mac주소를 선택 하세요");
+			$('[id=inputForm] #eqpmncode').focus();
+			return;
+		} */
 		//if ($('[id=inputForm] #programurl').val().trim() == '') {
 		//	alert("프로그램 URL을 입력 하세요");
 		//	$('[id=inputForm] #programurl').focus();
@@ -180,7 +286,11 @@
      		<div class="input-group-prepend">
        			<div class="input-group-text">구분</div>
      		</div>
-  		    <select class="form-control" id="codenm" name="codenm" style="width:100px"></select>
+  		    <select class="form-control" id="eqpmncode" name="eqpmncode" style="width:100px">
+  		    	<c:forEach var="cnmList" items="${cnmList}" varStatus="status">
+        			<option value="${cnmList.eqpmncode}">${cnmList.codenm}</option>
+      			</c:forEach>
+  		    </select>
    		</div>
    		<div class="input-group mb-2 mr-sm-2">
      		<div class="input-group-prepend">
@@ -193,8 +303,11 @@
        			<div class="input-group-text">사용여부</div>
      		</div>
   		    <select class="form-control" id="useyn" name="useyn" style="width:100px">
-        		<option value="Y" selected>사용</option>
-        		<option value="N">미사용</option>
+        		<!-- <option value="Y" selected>사용</option>
+        		<option value="N">미사용</option> -->
+        		<c:forEach var="cnmList" items="${cnmList}" varStatus="status">
+        			<option value="${cnmList.useyn}">${cnmList.useyn}</option>
+      			</c:forEach>
       		</select>
    		</div>
    		<div class="input-group mb-2 mr-sm-2">
@@ -202,8 +315,11 @@
        			<div class="input-group-text">폐기여부</div>
      		</div>
   		    <select class="form-control" id="disuseyn" name="disuseyn" style="width:100px">
-        		<option value="Y">폐기</option>
-        		<option value="N" selected>미폐기</option>
+        		<!-- <option value="Y">폐기</option>
+        		<option value="N" selected>미폐기</option> -->
+        		<c:forEach var="cnmList" items="${cnmList}" varStatus="status">
+        			<option value="${cnmList.disuseyn}">${cnmList.disuseyn}</option>
+      			</c:forEach>
       		</select>
    		</div>
    		<div class="input-group mb-2 mr-sm-2">
@@ -212,13 +328,15 @@
      		</div>
   		    <select class="form-control" id="useplace" name="useplace" style="width:150px"></select>
    		</div>
-		<button type="button" class="btn btn-sm btn-info mb-2" onclick="javascript:goSearch()"><i class="bi bi-search"></i> 조회</button>
+		<button type="button" class="btn btn-sm btn-info mb-2" id="btnSearch" onclick="javascript:goSearch()"><i class="bi bi-search"></i> 조회</button>
 	</form>
 	<p></p>
 	<table id="gridList1"></table>
 	<p></p>
 	<p>
 		<button type="button" class="btn btn-sm btn-primary" id="btn_input" name="btn_input" data-toggle="modal" onclick="javascript:initData()"><i class="bi bi-pencil-fill"></i>장비등록</button>
+		<button type="button" class="btn btn-sm btn-primary" id="btn_update" name="btn_update" data-toggle="modal" onclick="javascript:dataSelect()"><i class="bi bi-pencil-square"></i> 수정</button>
+		<button type="button" class="btn btn-sm btn-primary" onclick="javascript:goDelete();"><i class="bi bi-trash"></i> 삭제</button>
 	</p>
 </div>
 
@@ -235,15 +353,15 @@
 		<form id="inputForm" name="inputForm">
 		  <div class="form-group required control-label">
 		    <label for="codenm"><i class="bi bi-check2-circle"></i> 장비명</label>
-			<select class="form-control" id="codenm" name="codenm">
+			<select class="form-control" id="eqpmncode" name="eqpmncode">
 				<c:forEach var="cnmList" items="${cnmList}" varStatus="status">
-        			<option value="${cnmList.codenm}">${cnmList.codenm}</option>
+					<option value="${cnmList.code}">${cnmList.codenm}</option>
       			</c:forEach>
 			</select>
 		  </div>
 		  <div class="form-group control-label">
-		    <label for="programurl"><i class="bi bi-check2-circle"></i> mac주소</label>
-		    <input type="text" class="form-control" id="eqpmncode" name="eqpmncode" maxlength="200">
+		    <label for="programurl"><i class="bi bi-check2-circle"></i> manageno</label>
+		    <input type="text" class="form-control" id="manageno" name="manageno" maxlength="200">
 		  </div>
 		  <div class="form-group required control-label">
 		    <label for="purchsdate"><i class="bi bi-check2-circle"></i> 구매일자</label>

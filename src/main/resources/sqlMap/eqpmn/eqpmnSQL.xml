@@ -1,111 +1,199 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="eqpmnDaoSql">
-	<select id="selectEqpmnList"
-		parameterType="com.mtpms.dto.eqpmnManageDto"
-		resultType="com.mtpms.dto.eqpmnManageDto">
-		<!-- 
-		SELECT A.code_nm, B.manage_no, B.purchs_date,
-		B.purchs_amount, C.name, E.pern_no , E.use_yn, B.use_place,
-		B.disuse_yn
 
-		FROM cmmn_code_manage A, eqpmn_manage B, hpa100t C,
-		eqpmn_user_mapping D,
-		eqpmn_use_manage E
-
-		WHERE 1 = 1
-			
-		AND A.code = B.eqpmn_code (+)
-		AND B.manage_no = D.manage_no (+)
-		AND C.pern_no = D.pern_no
-		AND D.pern_no = E.pern_no
-		AND a.group_code NOT IN ('HODITYPE')
-			<if test="codenm != null and codenm != ''">
-				AND A.code_nm LIKE '%' || #{codenm} || '%'
+	<select id="selectEqpmnList" parameterType="com.mtpms.dto.eqpmnManageDto" resultType="com.mtpms.dto.eqpmnManageDto">
+		
+		SELECT E.eqpmn_code,
+		       E.code_nm,
+		       E.manage_no,
+		       E.purchs_date,
+		       E.purchs_amount,
+		       NVL(F.NAME+'('+F.pern_no+')', '-') as pern_no,
+		       E.use_yn,
+		       E.use_place,
+		       E.disuse_yn
+		FROM   (SELECT b.eqpmn_code,
+		               a.code_nm,
+		               b.manage_no,
+		               b.purchs_date,
+		               b.purchs_amount,
+		               b.use_yn,
+		               b.use_place,
+		               b.disuse_yn
+		       FROM    cmmn_code_manage a,
+		               eqpmn_manage b
+		       WHERE   a.code (+) = b.eqpmn_code
+		       AND     a.group_code NOT IN ('HODITYPE')
+		       )
+		       E,
+		       (SELECT C.pern_no,
+		               C.name,
+		               D.manage_no
+		       FROM    hpa100t C,
+		               eqpmn_user_mapping D
+		       WHERE   C.pern_no = D.pern_no (+)
+		       )
+		       F
+		WHERE  E.manage_no           = F.manage_no (+)
+		AND    E.manage_no IS NOT NULL
+			<if test="eqpmncode != null and eqpmncode != ''">
+				AND E.eqpmn_code LIKE '%' || #{eqpmncode} || '%'
 			</if>
 			<if test="purchsdate != null and purchsdate != ''">
-				AND B.purchs_date LIKE '%' || #{purchsdate} || '%'
+				AND E.purchs_date LIKE '%' || #{purchsdate} || '%'
 			</if>
 			<if test="useyn != null and useyn != ''">
 				AND E.use_yn = #{useyn}
 			</if>
 			<if test="disuseyn != null and disuseyn != ''">
-				AND B.disuse_yn = #{disuseyn}
+				AND E.disuse_yn = #{disuseyn}
 			</if>
 			<if test="useplace != null and useplace != ''">
-				AND B.use_place LIKE '%' || #{useplace} || '%'
-			</if>
-		GROUP BY B.manage_no 
-		-->
-		SELECT A.code_nm, A.manage_no, A.purchs_date, A.purchs_amount, NVL(A.pern_no, '-'), A.disuse_yn, A.use_place
-		FROM pmseqpmn A
-		where 1=1
-			<if test="codenm != null and codenm != ''">
-				AND A.code_nm LIKE '%' || #{codenm} || '%'
-			</if>
-			<if test="useplace != null and useplace != ''">
-				AND A.use_place LIKE '%' || #{useplace} || '%'
-			</if>
-			<if test="purchsdate != null and purchsdate != ''">
-				AND A.purchs_date LIKE '%' || #{purchsdate} || '%'
-			</if>
-			<if test="disuseyn != null and disuseyn != ''">
-				AND A.disuse_yn = #{disuseyn}
-			</if>
-		GROUP BY A.manage_no;
+				AND E.use_place LIKE '%' || #{useplace} || '%'
+			</if> 
+		ORDER BY E.purchs_date DESC
 	</select>
 
-	<select id="selectEqpmnCode"
-		resultType="com.mtpms.dto.eqpmnManageDto">
-		SELECT A.code_nm, b.manage_no, a.code
-		from cmmn_code_manage A, eqpmn_manage B
-		WHERE A.code = B.eqpmn_code (+)
-		AND a.group_code NOT IN ('HODITYPE')
-		AND A.group_code IN ('EQP1')
-		GROUP BY A.code_nm
+	<select id="selectEqpmnCode" resultType="com.mtpms.dto.eqpmnManageDto">
+
+		SELECT   B.eqpmn_code,
+		         B.manage_no,
+		         A.code,
+		         A.code_nm
+		FROM     cmmn_code_manage A,
+		         eqpmn_manage B
+		WHERE    A.code = B.eqpmn_code
+		AND      A.group_code NOT IN ('HODITYPE')
+		AND      A.group_code     IN ('EQP1')
+		GROUP BY B.eqpmn_code
 	</select>
 
-	<select id="selectEqpmnCode2"
-		resultType="com.mtpms.dto.eqpmnManageDto">
-		SELECT b.use_place
-		from cmmn_code_manage A, eqpmn_manage B
-		WHERE A.code = B.eqpmn_code (+)
-		AND a.group_code NOT IN ('HODITYPE')
-		AND b.use_place NOT IN ('null')
-		GROUP BY b.use_place
+	<select id="selectEqpmnCode2" resultType="com.mtpms.dto.eqpmnManageDto">
+
+		SELECT DISTINCT use_place
+		FROM            ( SELECT b.eqpmn_code,
+		                        b.use_place,
+		                        b.use_yn,
+		                        b.disuse_yn
+		                FROM    cmmn_code_manage A,
+		                        eqpmn_manage B
+		                WHERE   A.code = B.eqpmn_code (+)
+		                AND     a.group_code NOT IN ('HODITYPE')
+		                AND     b.use_yn NOT     IN ('null')
+		                AND     b.disuse_yn NOT     IN ('null')
+		                )
+	</select>
+	
+	<select id="selectEqpmnCode3" resultType="com.mtpms.dto.eqpmnManageDto">
+
+		SELECT DISTINCT use_yn
+		FROM            ( SELECT b.eqpmn_code,
+		                        b.use_place,
+		                        b.use_yn,
+		                        b.disuse_yn
+		                FROM    cmmn_code_manage A,
+		                        eqpmn_manage B
+		                WHERE   A.code = B.eqpmn_code (+)
+		                AND     a.group_code NOT IN ('HODITYPE')
+		                AND     b.use_yn NOT     IN ('null')
+		                AND     b.disuse_yn NOT     IN ('null')
+		                )
+	</select>
+	
+	<select id="selectEqpmnCode4" resultType="com.mtpms.dto.eqpmnManageDto">
+
+		SELECT DISTINCT disuse_yn
+		FROM            ( SELECT b.eqpmn_code,
+		                        b.use_place,
+		                        b.use_yn,
+		                        b.disuse_yn
+		                FROM    cmmn_code_manage A,
+		                        eqpmn_manage B
+		                WHERE   A.code = B.eqpmn_code (+)
+		                AND     a.group_code NOT IN ('HODITYPE')
+		                AND     b.use_yn NOT     IN ('null')
+		                AND     b.disuse_yn NOT     IN ('null')
+		                )
 	</select>
 
-	<select id="selectCnmList"
-		resultType="com.mtpms.dto.eqpmnManageDto">
-		SELECT A.code_nm, A.group_code
-		FROM cmmn_code_manage a
-		WHERE a.group_code IN ('EQP1')
+	<select id="selectCnmList" resultType="com.mtpms.dto.eqpmnManageDto">
+	
+		SELECT A.code_nm,
+		       A.group_code,
+		       A.code
+		FROM   cmmn_code_manage A
+		WHERE  A.group_code IN ('EQP1')
+		
 	</select>
 	
 	<update id="eqpmnUpdate" parameterType="com.mtpms.dto.db.pmsmenuDto">
-		MERGE INTO pmseqpmn A USING DUAL
-			ON A.manage_no = #{manageno}
-			WHEN MATCHED THEN
-				UPDATE SET	A.code_nm = #{codenm},
-							A.eqpmn_code = #{eqpmncode},
-							A.purchs_date = #{purchsdate},
-							A.purchs_amount = #{purchsamount},
-							A.pern_no = #{pernno},
-							A.disuse_yn = #{disuseyn},
-							A.use_place = #{useplace},
-							A.remark = #{remark},
-							A.use_yn = #{useyn}
-			WHEN NOT MATCHED THEN
-				INSERT (manage_no, code_nm, eqpmn_code, purchs_date, purchs_amount, pern_no, disuse_yn, use_place, remark, use_yn)
-				VALUES (eqpmn_seq.NEXT_VALUE, #{codenm}, #{eqpmncode}, #{purchsdate}, #{purchsamount}, #{pernno}, #{disuseyn}, #{useplace}, #{remark}, #{useyn})
+	
+		MERGE
+		INTO             eqpmn_manage A
+		USING            DUAL
+		ON A.manage_no                                = #{manageno}
+		WHEN MATCHED     THEN UPDATE SET A.eqpmn_code = #{eqpmncode},
+		                 A.purchs_date                = #{purchsdate},
+		                 A.purchs_amount              = #{purchsamount},
+		                 A.use_yn                     = #{useyn},
+		                 A.use_place                  = #{useplace},
+		                 A.disuse_yn                  = #{disuseyn},
+		                 A.remark                     = #{remark}
+		WHEN NOT MATCHED THEN
+		INSERT
+			   (
+		              manage_no,
+		              eqpmn_code,
+		              purchs_date,
+		              purchs_amount,
+		              use_yn,
+		              use_place,
+		              disuse_yn,
+		              remark
+		       )
+		       VALUES
+		       (
+		              'MC-'+RIGHT(YEAR(SYSDATETIME), 2)+'-'+
+		              (SELECT a.group_section
+		              FROM    cmmn_code_manage a
+		              WHERE   a.code = #{eqpmncode}
+		              )
+		              +'-'+
+		              (SELECT LPAD(eqpmn_seq.NEXT_VALUE, 4, '0')
+		              )
+		              ,
+		              #{eqpmncode},
+		              #{purchsdate},
+		              #{purchsamount},
+		              NVL(#{useyn}, 'N'),
+		              #{useplace},
+		              #{disuseyn},
+		              #{remark}
+		       )
 	</update>
+	
+	<delete id="eqpmnDelete" parameterType="com.mtpms.dto.db.pmsmenuDto">
+		DELETE FROM eqpmn_manage WHERE manage_no = #{manageno}
+	</delete>
 
 	<select id="eqpmnManageList" parameterType="com.mtpms.dto.eqpmnManageDto" resultType="com.mtpms.dto.eqpmnManageDto">
-		SELECT a.pern_no, a.pc_manage_no1, a.pc_manage_no2, a.mo_manage_no1, a.mo_manage_no2, a.ph_manage_no
-		FROM eqpmn_use_manage a, hpa100t b
-		WHERE a.pern_no = b.pern_no
+		SELECT 
+		       a.pc_manage_no1,
+		       a.pc_manage_no2,
+		       a.mo_manage_no1,
+		       a.mo_manage_no2,
+		       a.ph_manage_no,
+		       b.name,
+		       a.pern_no
+		FROM   eqpmn_use_manage a,
+		       hpa100t b
+		WHERE  a.pern_no = b.pern_no
 			<if test="type != null and type == 'pernno'">
 				AND a.pern_no LIKE '%' || #{keyword} || '%'
+			</if>
+			<if test="type != null and type == 'name'">
+				AND b.name LIKE '%' || #{keyword} || '%'
 			</if>
 			<if test="type != null and type == 'pcmanageno1'">
 				AND a.pc_manage_no1 LIKE '%' || #{keyword} || '%'
@@ -125,18 +213,25 @@
 	</select>
 	
 	<select id="selectEqpmnListCode" resultType="com.mtpms.dto.eqpmnManageDto">
-		SELECT A.code_nm, a.code
-		from cmmn_code_manage A, eqpmn_manage B
-		WHERE A.code = B.eqpmn_code (+)
-		AND a.group_code NOT IN ('HODITYPE')
-		AND A.group_code IN ('EQP1')
+		SELECT   A.code_nm,
+		         A.code
+		FROM     cmmn_code_manage A,
+		         eqpmn_manage B
+		WHERE    A.code = B.eqpmn_code (+)
+		AND      A.group_code NOT IN ('HODITYPE')
+		AND      A.group_code     IN ('EQP1')
 		GROUP BY A.code_nm
+
 	</select>
 	
 	<select id="userSelect" parameterType="com.mtpms.dto.eqpmnManageDto" resultType="com.mtpms.dto.eqpmnManageDto">
-		SELECT A.NAME, A.pern_no, A.post_name, A.phone_no, A.post_code
-		FROM hpa100t A
-		WHERE 1=1
+		SELECT A.NAME,
+		       A.pern_no,
+		       A.post_name,
+		       A.phone_no,
+		       A.post_code
+		FROM   hpa100t A
+		WHERE  1=1
 			<if test="type != null and type == 'name'">
 				AND a.name LIKE '%' || #{keyword} || '%'
 			</if>
@@ -153,16 +248,213 @@
 	</select>
 
 	<select id="eqpmnSelect" parameterType="com.mtpms.dto.eqpmnManageDto" resultType="com.mtpms.dto.eqpmnManageDto">
-		SELECT A.code, A.code_nm, B.manage_no, B.use_yn, C.pern_no, D.name
-		FROM cmmn_code_manage A, eqpmn_manage B, eqpmn_user_mapping C, hpa100t D
-		WHERE A.code = B.eqpmn_code
-		AND B.manage_no = C.manage_no
-		AND C.pern_no = D.pern_no
-			<if test="codenm != null and codenm != '전체'">
-				AND A.code_nm LIKE '%' || #{codenm} || '%'
+		SELECT E.eqpmn_code,
+		       E.code_nm,
+		       E.manage_no,
+		       E.purchs_date,
+		       E.purchs_amount,
+		       NVL(F.NAME+'('+F.pern_no+')', '-') as pern_no,
+		       E.use_yn,
+		       E.use_place,
+		       E.disuse_yn,
+		       E.code
+		FROM   (SELECT b.eqpmn_code,
+		               a.code_nm,
+		               b.manage_no,
+		               b.purchs_date,
+		               b.purchs_amount,
+		               b.use_yn,
+		               b.use_place,
+		               b.disuse_yn,
+		               a.code
+		       FROM    cmmn_code_manage a,
+		               eqpmn_manage b
+		       WHERE   a.code (+) = b.eqpmn_code
+		       AND     a.group_code NOT IN ('HODITYPE')
+		       )
+		       E,
+		       (SELECT C.pern_no,
+		               C.name,
+		               D.manage_no
+		       FROM    hpa100t C,
+		               eqpmn_user_mapping D
+		       WHERE   C.pern_no = D.pern_no (+)
+		       )
+		       F
+		WHERE  E.manage_no           = F.manage_no (+)
+		AND    E.manage_no IS NOT NULL
+			<if test="eqpmncode != null and eqpmncode != '전체'">
+				AND E.code LIKE '%' || #{eqpmncode} || '%'
 			</if>
 			<if test="useyn != null and useyn != ''">
-				AND B.use_yn = #{useyn}
+				AND E.use_yn = #{useyn}
 			</if>
 	</select>
+	
+	<update id="userManageUpdate" parameterType="com.mtpms.dto.eqpmnManageDto">
+	
+		MERGE
+		INTO             eqpmn_use_manage A
+		USING            DUAL
+		ON A.pern_no                                		= #{pernno}
+		
+		WHEN MATCHED     THEN UPDATE SET A.input_date 		= #{inputdate},
+		                 A.exp_date                			= #{expdate},
+		                 A.use_yn							= #{useyn},
+		                 A.pc_manage_no1              		= #{pcmanageno1},
+		                 A.pc_manage_no2                    = #{pcmanageno2},
+		                 A.mo_manage_no1                 	= #{momanageno1},
+		                 A.mo_manage_no2                  	= #{momanageno2},
+		                 A.ph_manage_no                     = #{phmanageno}
+		                 
+		WHEN NOT MATCHED THEN
+		INSERT
+			   (
+		              input_date,
+		              exp_date,
+		              use_yn,
+		              pern_no,
+		              pc_manage_no1,
+		              pc_manage_no2,
+		              mo_manage_no1,
+		              mo_manage_no2,
+		              ph_manage_no
+		              
+		       )
+		       VALUES
+		       (
+		              #{inputdate},
+		              #{expdate},
+		              #{useyn},
+		              #{pernno},
+		              #{pcmanageno1},
+		              #{pcmanageno2},
+		              #{momanageno1},
+		              #{momanageno2},
+		              #{phmanageno}
+		       )
+	</update>
+	
+	<update id="userMappingUpdate" parameterType="com.mtpms.dto.eqpmnManageDto">
+		MERGE
+		INTO			eqpmn_user_mapping A
+		USING			(
+						SELECT						B.pern_no,
+													B.pc_manage_no1,
+													B.pc_manage_no2,
+													B.mo_manage_no1,
+													B.mo_manage_no2,
+													B.ph_manage_no
+						FROM						eqpmn_use_manage B
+						)
+						
+		ON				(A.manage_no				!= pc_manage_no1
+		OR				A.manage_no					!= pc_manage_no2
+		OR				A.manage_no					!= mo_manage_no1
+		OR				A.manage_no					!= mo_manage_no2
+		OR				A.manage_no					!= ph_manage_no)
+		
+		<!-- WHEN NOT MATCHED	THEN UPDATE SET A.pern_no			= #{pernno},
+						A.cmos_pw							= 'NULL',
+						A.sso_id							= 'NULL',
+						A.sso_pw							= 'NULL' -->
+		WHEN MATCHED AND pc_manage_no1 != '' THEN
+						INSERT
+								(
+									manage_no,
+									pern_no,
+									cmos_pw,
+									sso_id,
+									sso_pw
+								)
+								VALUES
+								(
+									#{pcmanageno1}, 
+									#{pernno}, 
+									'NULL', 
+									'NULL', 
+									'NULL'
+								)
+		WHEN MATCHED AND pc_manage_no2 != '' THEN
+						INSERT
+								(
+									manage_no,
+									pern_no,
+									cmos_pw,
+									sso_id,
+									sso_pw
+								)
+								VALUES
+								(
+									#{pcmanageno2}, 
+									#{pernno}, 
+									'NULL', 
+									'NULL', 
+									'NULL'
+								)
+		WHEN MATCHED AND mo_manage_no1 != '' THEN
+						INSERT
+								(
+									manage_no,
+									pern_no,
+									cmos_pw,
+									sso_id,
+									sso_pw
+								)
+								VALUES
+								(
+									#{momanageno1}, 
+									#{pernno}, 
+									'NULL', 
+									'NULL', 
+									'NULL'
+								)						
+		WHEN MATCHED AND mo_manage_no2 != '' THEN
+						INSERT
+								(
+									manage_no,
+									pern_no,
+									cmos_pw,
+									sso_id,
+									sso_pw
+								)
+								VALUES
+								(
+									#{momanageno2}, 
+									#{pernno}, 
+									'NULL', 
+									'NULL', 
+									'NULL'
+								)						
+		WHEN MATCHED AND ph_manage_no != '' THEN
+						INSERT
+								(
+									manage_no,
+									pern_no,
+									cmos_pw,
+									sso_id,
+									sso_pw
+								)
+								VALUES
+								(
+									#{phmanageno},
+									#{pernno},
+									'NULL',
+									'NULL',
+									'NULL'
+								)
+
+		
+	</update>
+	
+	<update id="eqpmnMappingUpdate" parameterType="com.mtpms.dto.eqpmnManageDto">
+		UPDATE			eqpmn_manage A
+		SET				A.use_yn					= 'Y'
+		WHERE			A.manage_no					= #{pcmanageno1}
+		OR				A.manage_no					= #{pcmanageno2}
+		OR				A.manage_no					= #{momanageno1}
+		OR				A.manage_no					= #{momanageno2}
+		OR				A.manage_no					= #{phmanageno}
+		
+	</update>
 </mapper>

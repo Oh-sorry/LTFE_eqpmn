@@ -18,7 +18,8 @@
 			loadtext : '조회 중 입니다.',
 			shrinkToFit:false,
 			colModel:[
-		   		{label:'사용자', name:'pernno', width:30},
+				{label:'사용자', name:'name', width:30},
+		   		{label:'사번', name:'pernno', width:30},
 		   		{label:'수탁망PC', name:'pcmanageno1', width:30},
 		   		{label:'인터넷망PC', name:'pcmanageno2', width:30},
 		   		{label:'모니터1', name:'momanageno1', width:30},
@@ -67,7 +68,8 @@
        			<div class="input-group-text">검색 </div>
      		</div>
   		    <select class="form-control" id="type" name="type" style="width:100px">
-  		    	<option value="pernno" selected> 사번</option>
+  		    	<option value="name" selected> 사용자</option>
+  		    	<option value="pernno"> 사번</option>
   		    	<option value="pcmanageno1"> 수탁망PC</option>
   		    	<option value="pcmanageno2"> 인터넷망PC</option>
   		    	<option value="momanageno1"> 모니터1</option>
