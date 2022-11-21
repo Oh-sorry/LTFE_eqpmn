@@ -336,114 +336,89 @@
 	</update>
 	
 	<update id="userMappingUpdate" parameterType="com.mtpms.dto.eqpmnManageDto">
-		MERGE
+<!-- 		MERGE
 		INTO			eqpmn_user_mapping A
-		USING			(
-						SELECT						B.pern_no,
-													B.pc_manage_no1,
-													B.pc_manage_no2,
-													B.mo_manage_no1,
-													B.mo_manage_no2,
-													B.ph_manage_no
-						FROM						eqpmn_use_manage B
-						)
-						
-		ON				(A.manage_no				!= pc_manage_no1
-		OR				A.manage_no					!= pc_manage_no2
-		OR				A.manage_no					!= mo_manage_no1
-		OR				A.manage_no					!= mo_manage_no2
-		OR				A.manage_no					!= ph_manage_no)
+		USING			DUAL
+		ON				(A.manage_no					= #{pcmanageno1}
+		OR				A.manage_no					= #{pcmanageno2}
+		OR				A.manage_no					= #{momanageno1}
+		OR				A.manage_no					= #{momanageno2}
+		OR				A.manage_no					= #{phmanageno})
 		
-		<!-- WHEN NOT MATCHED	THEN UPDATE SET A.pern_no			= #{pernno},
+		WHEN MATCHED	THEN UPDATE SET A.pern_no			= #{pernno},
 						A.cmos_pw							= 'NULL',
 						A.sso_id							= 'NULL',
-						A.sso_pw							= 'NULL' -->
-		WHEN MATCHED AND pc_manage_no1 != '' THEN
-						INSERT
-								(
-									manage_no,
-									pern_no,
-									cmos_pw,
-									sso_id,
-									sso_pw
-								)
-								VALUES
-								(
-									#{pcmanageno1}, 
-									#{pernno}, 
-									'NULL', 
-									'NULL', 
-									'NULL'
-								)
-		WHEN MATCHED AND pc_manage_no2 != '' THEN
-						INSERT
-								(
-									manage_no,
-									pern_no,
-									cmos_pw,
-									sso_id,
-									sso_pw
-								)
-								VALUES
-								(
-									#{pcmanageno2}, 
-									#{pernno}, 
-									'NULL', 
-									'NULL', 
-									'NULL'
-								)
-		WHEN MATCHED AND mo_manage_no1 != '' THEN
-						INSERT
-								(
-									manage_no,
-									pern_no,
-									cmos_pw,
-									sso_id,
-									sso_pw
-								)
-								VALUES
-								(
-									#{momanageno1}, 
-									#{pernno}, 
-									'NULL', 
-									'NULL', 
-									'NULL'
-								)						
-		WHEN MATCHED AND mo_manage_no2 != '' THEN
-						INSERT
-								(
-									manage_no,
-									pern_no,
-									cmos_pw,
-									sso_id,
-									sso_pw
-								)
-								VALUES
-								(
-									#{momanageno2}, 
-									#{pernno}, 
-									'NULL', 
-									'NULL', 
-									'NULL'
-								)						
-		WHEN MATCHED AND ph_manage_no != '' THEN
-						INSERT
-								(
-									manage_no,
-									pern_no,
-									cmos_pw,
-									sso_id,
-									sso_pw
-								)
-								VALUES
-								(
-									#{phmanageno},
-									#{pernno},
-									'NULL',
-									'NULL',
-									'NULL'
-								)
-
+						A.sso_pw							= 'NULL'
+		
+		WHEN NOT MATCHED THEN
+		INSERT
+				(
+					manage_no,
+					pern_no,
+					cmos_pw,
+					sso_id,
+					sso_pw
+				)
+				VALUES
+				(
+					<if test="pcmanageno1 != null and pcmanageno1 != ''">
+						#{pcmanageno1},
+					</if>
+					<if test="pcmanageno2 != null and pcmanageno2 != ''">
+						#{pcmanageno2},
+					</if>
+					<if test="momanageno1 != null and momanageno1 != ''">
+						#{momanageno1},
+					</if>
+					<if test="momanageno2 != null and momanageno2 != ''">
+						#{momanageno2},
+					</if>
+					<if test="phmanageno != null and phmanageno != ''">
+						#{phmanageno},
+					</if>
+					#{pernno},
+					'NULL',
+					'NULL',
+					'NULL'
+				) -->
+				
+		INSERT INTO		eqpmn_user_mapping
+						(manage_no, pern_no, cmos_pw, sso_id, sso_pw)
+						
+		VALUES			
+						<!-- <choose>
+							<when test="pcmanageno1 != null and pcmanageno1 != ''">
+								(#{pcmanageno1}, #{pernno}, 'NULL', 'NULL', 'NULL'),
+							</when>
+							<when test="pcmanageno2 != null and pcmanageno2 != ''">
+								(#{pcmanageno2}, #{pernno}, 'NULL', 'NULL', 'NULL'),
+							</when>
+							<when test="momanageno1 != null and momanageno1 != ''">
+								(#{momanageno1}, #{pernno}, 'NULL', 'NULL', 'NULL'),
+							</when>
+							<when test="momanageno2 != null and momanageno2 != ''">
+								(#{momanageno2}, #{pernno}, 'NULL', 'NULL', 'NULL'),
+							</when>
+							<otherwise>
+								(#{phmanageno}, #{pernno}, 'NULL', 'NULL', 'NULL')
+							</otherwise>
+						</choose> -->
+						<if test="pcmanageno1 != null and pcmanageno1 != ''">
+							(#{pcmanageno1}, #{pernno}, 'NULL', 'NULL', 'NULL'),
+						</if>
+						<if test="pcmanageno2 != null and pcmanageno2 != ''">
+							(#{pcmanageno2}, #{pernno}, 'NULL', 'NULL', 'NULL'),
+						</if>
+						<if test="momanageno1 != null and momanageno1 != ''">
+							(#{momanageno1}, #{pernno}, 'NULL', 'NULL', 'NULL'),
+						</if>
+						<if test="momanageno2 != null and momanageno2 != ''">
+							(#{momanageno2}, #{pernno}, 'NULL', 'NULL', 'NULL'),
+						</if>
+						<if test="phmanageno != null and phmanageno != ''">
+							(#{phmanageno}, #{pernno}, 'NULL', 'NULL', 'NULL')
+						</if>
+						
 		
 	</update>
 	
@@ -456,5 +431,23 @@
 		OR				A.manage_no					= #{momanageno2}
 		OR				A.manage_no					= #{phmanageno}
 		
+	</update>
+	
+	<delete id="userDelete" parameterType="com.mtpms.dto.db.pmsmenuDto">
+		DELETE FROM eqpmn_use_manage WHERE pern_no = #{pernno}
+	</delete>
+	
+	<delete id="userDelete2" parameterType="com.mtpms.dto.db.pmsmenuDto">
+		DELETE FROM eqpmn_user_mapping WHERE pern_no = #{pernno}
+	</delete>
+	
+	<update id="userDelete3" parameterType="com.mtpms.dto.db.pmsmenuDto">
+		UPDATE	eqpmn_manage
+		SET		use_yn			= 'N'
+		WHERE	manage_no 		= #{pcmanageno1}
+		OR		manage_no		= #{pcmanageno2}
+		OR		manage_no		= #{momanageno1}
+		OR		manage_no		= #{momanageno2}
+		OR		manage_no		= #{phmanageno}
 	</update>
 </mapper>

@@ -40,6 +40,9 @@ public interface eqpmnService {
 
 	public int eqpmnMappingUpdate(eqpmnManageDto eqpmnManageDto) throws Exception;
 
+	public int userDelete(eqpmnManageDto eqpmnManageDto) throws Exception;
 
+	public int userDelete2(eqpmnManageDto eqpmnManageDto) throws Exception;
 
+	public int userDelete3(eqpmnManageDto eqpmnManageDto) throws Exception;
 }

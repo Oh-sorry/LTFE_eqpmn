@@ -55,6 +55,42 @@
 
 	}
 
+	
+	function goDelete() {
+		var rowid = $("#gridList1").getGridParam( "selrow" );
+
+		if (rowid == null || rowid < 1) {
+			alert("삭제할 데이터를 선택하세요");
+			return;
+		}
+
+		var rowData = $("#gridList1").getRowData(rowid);
+
+		if (!confirm("정말로 삭제하시겠습니까?")) {
+			return;
+		}
+
+		loadingOn();
+
+		$.ajax({
+             type : "POST",
+             url : "${pageContext.request.contextPath}/eqpmn/userManageDelete.ajax",
+             data : rowData,
+             async: false,
+             success : function(data){
+            	 if(data != null) {
+            	 	alert("정상적으로 처리되었습니다.")
+                 	goSearch();
+	           		loadingOff();
+            	 }
+             },
+             error : function(XMLHttpRequest, textStatus, errorThrown){
+                 alert("작업 중 오류가 발생하였습니다.")
+                 loadingOff();
+             }
+         });
+	}
+
 </script>
 
 <div class="container float-left">
@@ -87,6 +123,8 @@
 	<p></p>
 	<p>
 		<button type="button" class="btn btn-sm btn-primary" id="btn_input" name="btn_input" data-toggle="modal" onclick="javascript:initData()"><i class="bi bi-pencil-fill"></i>사용자등록</button>
+		<button type="button" class="btn btn-sm btn-primary" id="btn_update" name="btn_update" data-toggle="modal" onclick=""><i class="bi bi-pencil-square"></i> 사용자수정</button>
+		<button type="button" class="btn btn-sm btn-primary" onclick="javascript:goDelete();"><i class="bi bi-trash"></i> 사용자삭제</button>
 	</p>
 </div>
 

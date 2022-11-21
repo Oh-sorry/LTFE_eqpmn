@@ -135,4 +135,22 @@ public class eqpmnServiceImpl extends EgovAbstractServiceImpl implements eqpmnSe
 		
 		return rtn3;
 	}
+	
+	public int userDelete(eqpmnManageDto eqpmnManageDto) throws Exception {
+		int rtn = eqpmnDao.userDelete(eqpmnManageDto);
+		
+		return rtn;
+	}
+	
+	public int userDelete2(eqpmnManageDto eqpmnManageDto) throws Exception {
+		int rtn = eqpmnDao.userDelete2(eqpmnManageDto);
+		
+		return rtn;
+	}
+	
+	public int userDelete3(eqpmnManageDto eqpmnManageDto) throws Exception {
+		int rtn = eqpmnDao.userDelete3(eqpmnManageDto);
+		
+		return rtn;
+	}
 }

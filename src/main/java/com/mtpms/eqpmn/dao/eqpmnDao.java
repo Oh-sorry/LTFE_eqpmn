@@ -76,4 +76,15 @@ public class eqpmnDao extends EgovAbstractMapper{
 		return update("eqpmnDaoSql.eqpmnMappingUpdate", eqpmnManageDto);
 	}
 
+	public int userDelete(eqpmnManageDto eqpmnManageDto) {
+		return delete("eqpmnDaoSql.userDelete", eqpmnManageDto);
+	}
+
+	public int userDelete2(eqpmnManageDto eqpmnManageDto) {
+		return delete("eqpmnDaoSql.userDelete2", eqpmnManageDto);
+	}
+	
+	public int userDelete3(eqpmnManageDto eqpmnManageDto) {
+		return update("eqpmnDaoSql.userDelete3", eqpmnManageDto);
+	}
 }

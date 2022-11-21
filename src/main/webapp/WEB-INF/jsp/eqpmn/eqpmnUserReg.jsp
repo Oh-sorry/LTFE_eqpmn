@@ -264,8 +264,6 @@
 		}
 		var formData = $('#regForm').serializeArray();
 		
-		alert($('input[id=pernno]').val());
-		
 		loadingOn();
 
 		$.ajax({

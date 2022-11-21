@@ -202,4 +202,24 @@ public class eqpmnController {
 		
 		return resRtn;
 	}
+	
+	@RequestMapping(value="/eqpmn/userManageDelete.ajax",  method={RequestMethod.POST})
+	public ResponseEntity<String> userManageDelete(@ModelAttribute("eqpmnManageDto") eqpmnManageDto eqpmnManageDto, HttpSession session, Model model) throws Exception {
+		int rtn = eqpmnService.userDelete(eqpmnManageDto);
+		
+		int rtn2 = eqpmnService.userDelete2(eqpmnManageDto);
+		
+		int rtn3 = eqpmnService.userDelete2(eqpmnManageDto);
+		
+		logger.info("rtn =>" + rtn);
+		
+		ResponseEntity<String> resRtn = null;
+		if(rtn ==1) {
+			resRtn = new ResponseEntity<>(HttpStatus.OK);
+		} else {
+			resRtn = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+		
+		return resRtn;
+	}
 }
