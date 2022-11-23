@@ -41,7 +41,7 @@
 				AND E.eqpmn_code LIKE '%' || #{eqpmncode} || '%'
 			</if>
 			<if test="purchsdate != null and purchsdate != ''">
-				AND E.purchs_date LIKE '%' || #{purchsdate} || '%'
+				AND E.purchs_date = #{purchsdate}
 			</if>
 			<if test="useyn != null and useyn != ''">
 				AND E.use_yn = #{useyn}
@@ -229,7 +229,8 @@
 		       A.pern_no,
 		       A.post_name,
 		       A.phone_no,
-		       A.post_code
+		       A.post_code,
+		       A.dept_name
 		FROM   hpa100t A
 		WHERE  1=1
 			<if test="type != null and type == 'name'">
@@ -241,8 +242,8 @@
 			<if test="type != null and type == 'postname'">
 				AND a.post_name LIKE '%' || #{keyword} || '%'
 			</if>
-			<if test="type != null and type == 'phoneno'">
-				AND a.phone_no LIKE '%' || #{keyword} || '%'
+			<if test="type != null and type == 'deptname'">
+				AND a.dept_name LIKE '%' || #{keyword} || '%'
 			</if>
 		ORDER BY A.NAME
 	</select>
@@ -351,73 +352,36 @@
 						A.sso_pw							= 'NULL'
 		
 		WHEN NOT MATCHED THEN
-		INSERT
-				(
-					manage_no,
-					pern_no,
-					cmos_pw,
-					sso_id,
-					sso_pw
-				)
-				VALUES
-				(
-					<if test="pcmanageno1 != null and pcmanageno1 != ''">
-						#{pcmanageno1},
-					</if>
-					<if test="pcmanageno2 != null and pcmanageno2 != ''">
-						#{pcmanageno2},
-					</if>
-					<if test="momanageno1 != null and momanageno1 != ''">
-						#{momanageno1},
-					</if>
-					<if test="momanageno2 != null and momanageno2 != ''">
-						#{momanageno2},
-					</if>
-					<if test="phmanageno != null and phmanageno != ''">
-						#{phmanageno},
-					</if>
-					#{pernno},
-					'NULL',
-					'NULL',
-					'NULL'
-				) -->
-				
-		INSERT INTO		eqpmn_user_mapping
-						(manage_no, pern_no, cmos_pw, sso_id, sso_pw)
+-->
+		MERGE
+		INTO			eqpmn_user_mapping A
+		USING			DUAL
+		ON				(A.manage_no				= #{manageno}
+		AND				A.pern_no					= #{pernno})
+		
+		WHEN MATCHED THEN
+						UPDATE SET A.manage_no		= #{manageno},
+						A.cmos_pw					= 'NULL',
+						A.sso_id					= 'NULL',
+						A.sso_pw					= 'NULL'
 						
-		VALUES			
-						<!-- <choose>
-							<when test="pcmanageno1 != null and pcmanageno1 != ''">
-								(#{pcmanageno1}, #{pernno}, 'NULL', 'NULL', 'NULL'),
-							</when>
-							<when test="pcmanageno2 != null and pcmanageno2 != ''">
-								(#{pcmanageno2}, #{pernno}, 'NULL', 'NULL', 'NULL'),
-							</when>
-							<when test="momanageno1 != null and momanageno1 != ''">
-								(#{momanageno1}, #{pernno}, 'NULL', 'NULL', 'NULL'),
-							</when>
-							<when test="momanageno2 != null and momanageno2 != ''">
-								(#{momanageno2}, #{pernno}, 'NULL', 'NULL', 'NULL'),
-							</when>
-							<otherwise>
-								(#{phmanageno}, #{pernno}, 'NULL', 'NULL', 'NULL')
-							</otherwise>
-						</choose> -->
-						<if test="pcmanageno1 != null and pcmanageno1 != ''">
-							(#{pcmanageno1}, #{pernno}, 'NULL', 'NULL', 'NULL'),
-						</if>
-						<if test="pcmanageno2 != null and pcmanageno2 != ''">
-							(#{pcmanageno2}, #{pernno}, 'NULL', 'NULL', 'NULL'),
-						</if>
-						<if test="momanageno1 != null and momanageno1 != ''">
-							(#{momanageno1}, #{pernno}, 'NULL', 'NULL', 'NULL'),
-						</if>
-						<if test="momanageno2 != null and momanageno2 != ''">
-							(#{momanageno2}, #{pernno}, 'NULL', 'NULL', 'NULL'),
-						</if>
-						<if test="phmanageno != null and phmanageno != ''">
-							(#{phmanageno}, #{pernno}, 'NULL', 'NULL', 'NULL')
-						</if>
+		WHEN NOT MATCHED THEN
+		INSERT
+						(
+						manage_no,
+						pern_no,
+						cmos_pw,
+						sso_id,
+						sso_pw
+						)
+		VALUES			(
+						#{manageno},
+						#{pernno},
+						'NULL',
+						'NULL',
+						'NULL'
+						)
+						
 						
 		
 	</update>

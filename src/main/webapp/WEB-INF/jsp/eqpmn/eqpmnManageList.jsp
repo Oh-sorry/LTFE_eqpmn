@@ -90,7 +90,6 @@
              }
          });
 	}
-
 </script>
 
 <div class="container float-left">
@@ -123,7 +122,7 @@
 	<p></p>
 	<p>
 		<button type="button" class="btn btn-sm btn-primary" id="btn_input" name="btn_input" data-toggle="modal" onclick="javascript:initData()"><i class="bi bi-pencil-fill"></i>사용자등록</button>
-		<button type="button" class="btn btn-sm btn-primary" id="btn_update" name="btn_update" data-toggle="modal" onclick=""><i class="bi bi-pencil-square"></i> 사용자수정</button>
+		<!-- <button type="button" class="btn btn-sm btn-primary" id="btn_update" name="btn_update" data-toggle="modal" onclick="javascript:dataSelect()"><i class="bi bi-pencil-square"></i> 사용자수정</button> -->
 		<button type="button" class="btn btn-sm btn-primary" onclick="javascript:goDelete();"><i class="bi bi-trash"></i> 사용자삭제</button>
 	</p>
 </div>

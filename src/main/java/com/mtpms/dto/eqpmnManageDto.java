@@ -38,6 +38,7 @@ public class eqpmnManageDto implements Serializable{
 	private String postcode;
 	private String postname;
 	private String phoneno;
+	private String deptname;
 	
 	private String cmospw;
 	private String ssoid;
@@ -266,6 +267,14 @@ public class eqpmnManageDto implements Serializable{
 
 	public void setSsopw(String ssopw) {
 		this.ssopw = ssopw;
+	}
+
+	public String getDeptname() {
+		return deptname;
+	}
+
+	public void setDeptname(String deptname) {
+		this.deptname = deptname;
 	}
 
 	

@@ -41,8 +41,16 @@
 				{label:'성명', name:'name', width:80},
 				{label:'사번', name:'pernno', width:100},
 				{label:'직위', name:'postname', width:80},
-				{label:'전화번호', name:'phoneno', width:200},
-				{label:'LEVEL', name:'level', hidden:true}
+				{label:'부서명', name:'deptname', width:200},
+				{label:'전화번호', name:'phoneno', hidden:true},
+				{label:'LEVEL', name:'level', hidden:true},
+				{label:'수탁망PC', name:'pcmanageno1', hidden:true},
+				{label:'인터넷망PC', name:'pcmanageno2', hidden:true},
+				{label:'모니터1', name:'momanageno1', hidden:true},
+				{label:'모니터2', name:'momanageno2', hidden:true},
+				{label:'전화기', name:'phmanageno', hidden:true},
+				{label:'투입일자', name:'inputdate', hidden:true},
+				{label:'철수일자', name:'expdate', hidden:true}
 		   	],
 		   	loadonce: true,
 		   	sortable : true,
@@ -78,7 +86,7 @@
 		}
 		var rowData = $("#gridList1").getRowData(rowid);
 		var formData = $('#userForm').serializeArray();
-
+		
 		jQuery.each(formData, function() {
 			for(key in rowData) {
 			    if (key == this.name) {
@@ -86,10 +94,11 @@
 			    }
 			}
         });
+		
 		$('input[id=pernno]').attr('value', rowData.pernno);
 		$('input[id=name]').attr('value', rowData.name);
-		/* $('input[id=pernno]').attr('value', rowData.name+"("+rowData.pernno+")"); */
 		$('#modalpopup').modal('hide');
+		
 	}
 	/* 사용자 조회 끝 */
 	
@@ -284,6 +293,7 @@
                  loadingOff();
              }
          });
+		location.href = "${pageContext.request.contextPath}/eqpmn/eqpmnManageList.do";
 	}
 </script>
 
@@ -303,7 +313,7 @@
 				<td colspan="80%">
 					<div class="input-group mb-2 mr-sm-2">
 						<input type="text" class="form-cotrol" id="name" name="name" readonly>
-						<input type="text" class="form-cotrol" id="pernno" name="pernno" maxlength="100" readonly>
+						<input type="hidden" class="form-cotrol" id="pernno" name="pernno" maxlength="100" readonly>
 						<button type="button" class="btn btn-sm btn-info" id="btn-user" name="btn-user" data-toggle="modal" onclick="javascript:initUser()">사용자조회</button>
 						<button type="button" class="btn btn-sm btn-secondary" id="pernno" onclick="javascript:resetInput(this)">X</button>
 					</div>
@@ -315,9 +325,9 @@
 				</td>
 				<td colspan="80%">
 					<div class="input-group mb-2 mr-sm-2">
-						<input type="text" class="form-cotrol" id="inputdate" name="inputdate" maxlength="100" placeholder="투입일자">
+						<input type="date" class="form-cotrol" id="inputdate" name="inputdate" maxlength="100" placeholder="투입일자">
 						~
-						<input type="text" class="form-cotrol" id="expdate" name="expdate" maxlength="100" placeholder="철수일자">
+						<input type="date" class="form-cotrol" id="expdate" name="expdate" maxlength="100" placeholder="철수일자">
 						<button type="button" class="btn btn-sm btn-secondary" onclick="javascript:resetDate()">X</button>
 					</div>
 				</td>
@@ -441,8 +451,8 @@
 		</table>
 	</form>
 	<div class="float-right">
-		<button type="button" class="btn btn-sm btn-primary" onclick="javascript:goSave()"><i class="bi bi-save"></i> 저장</button>
-		<button type="button" class="btn btn-sm btn-secondary" id="btn_close" name="btn_close"><i class="bi bi-x"></i> 뒤로</button>
+		<button type="button" class="btn btn-sm btn-primary" onclick="javascript:goSave()"><i class="bi bi-save"></i> 등록</button>
+		<button type="button" class="btn btn-sm btn-secondary" id="btn_close" name="btn_close"><i class="bi bi-x"></i> 취소</button>
 	</div>
 	
 <!-- 사용자 조회 popup 시작-->
@@ -462,7 +472,7 @@
 		  		    	<option value="name" selected> 성명</option>
 		  		    	<option value="pernno"> 사번</option>
 		  		    	<option value="postname"> 직위</option>
-		  		    	<option value="phoneno"> 전화번호</option>
+		  		    	<option value="deptname"> 부서명</option>
 		  		    </select>
 		  		    <div class="form-row">
 			     		&nbsp;<input type="text" class="form-control" id="keyword" name="keyword">
@@ -475,8 +485,8 @@
 		<p></p>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-sm btn-primary" onclick="javascript:userSelect()"><i class="bi bi-save"></i> 저장</button>
-        <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal"><i class="bi bi-x"></i> 닫기</button>
+        <button type="button" class="btn btn-sm btn-primary" onclick="javascript:userSelect()"><i class="bi bi-save"></i> 선택</button>
+        <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal"><i class="bi bi-x"></i> 취소</button>
       </div>
     </div>
   </div>
@@ -528,8 +538,8 @@
 		<p></p>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-sm btn-primary" onclick="javascript:eqpmnSelect()"><i class="bi bi-save"></i> 저장</button>
-        <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal"><i class="bi bi-x"></i> 닫기</button>
+        <button type="button" class="btn btn-sm btn-primary" onclick="javascript:eqpmnSelect()"><i class="bi bi-save"></i> 선택</button>
+        <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal"><i class="bi bi-x"></i> 취소</button>
       </div>
     </div>
   </div>

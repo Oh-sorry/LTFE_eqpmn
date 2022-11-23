@@ -188,27 +188,7 @@
              }
          });
 	}
-	function goMenuSelect4() {
-		$.ajax({
-             type : "POST",
-             url : "${pageContext.request.contextPath}/eqpmn/selectEqpmnCode4.ajax",
-             async: false,
-             success : function(data){
-            	 if(data != null) {
-            		 selectoption = "<option value=''>전체</option>";
-            		    $.each(data , function (i, item) {
-            		   	 selectoption += "<option value=" + item.disuseyn + ">" + item.disuseyn + "</option>";
-            		    });
-            		    $('[id=searchForm] #disuseyn option').remove();
-            		    $('[id=searchForm] #disuseyn').append(selectoption);
-                     
-            	 }
-             },
-             error : function(XMLHttpRequest, textStatus, errorThrown){
-                 alert("작업 중 오류가 발생하였습니다.")
-             }
-         });
-	}
+	
 	function goSave() {
 
 		if ($('[id=inputForm] #eqpmncode').val() == null) {
@@ -296,9 +276,9 @@
      		<div class="input-group-prepend">
        			<div class="input-group-text">구매일자</div>
      		</div>
-     		<input type="text" class="form-control" id="purchsdate" name="purchsdate" style="width:100px">
+     		<input type="date" class="form-control" id="purchsdate" name="purchsdate" style="width:200px">
    		</div>
-   		<div class="input-group mb-2 mr-sm-2">
+   		<%-- <div class="input-group mb-2 mr-sm-2">
      		<div class="input-group-prepend">
        			<div class="input-group-text">사용여부</div>
      		</div>
@@ -309,17 +289,17 @@
         			<option value="${cnmList.useyn}">${cnmList.useyn}</option>
       			</c:forEach>
       		</select>
-   		</div>
+   		</div> --%>
    		<div class="input-group mb-2 mr-sm-2">
      		<div class="input-group-prepend">
        			<div class="input-group-text">폐기여부</div>
      		</div>
   		    <select class="form-control" id="disuseyn" name="disuseyn" style="width:100px">
-        		<!-- <option value="Y">폐기</option>
-        		<option value="N" selected>미폐기</option> -->
-        		<c:forEach var="cnmList" items="${cnmList}" varStatus="status">
+        		<option value="Y">폐기</option>
+        		<option value="N" selected>미폐기</option>
+        		<%-- <c:forEach var="cnmList" items="${cnmList}" varStatus="status">
         			<option value="${cnmList.disuseyn}">${cnmList.disuseyn}</option>
-      			</c:forEach>
+      			</c:forEach> --%>
       		</select>
    		</div>
    		<div class="input-group mb-2 mr-sm-2">
@@ -365,7 +345,7 @@
 		  </div>
 		  <div class="form-group required control-label">
 		    <label for="purchsdate"><i class="bi bi-check2-circle"></i> 구매일자</label>
-		    <input type="text" class="form-control" id="purchsdate" name="purchsdate" maxlength="100">
+		    <input type="date" class="form-control" id="purchsdate" name="purchsdate" maxlength="100">
 		  </div>
 		  <div class="form-group required control-label">
 		    <label for="purchsamount"><i class="bi bi-check2-circle"></i>  구매금액</label>

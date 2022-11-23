@@ -185,12 +185,41 @@ public class eqpmnController {
 	public ResponseEntity<String> userManageUpdate(@ModelAttribute("eqpmnManageDto") eqpmnManageDto eqpmnManageDto, HttpSession session, Model model) throws Exception {
 		int rtn = eqpmnService.userManageUpdate(eqpmnManageDto);
 		
-		int rtn2 = eqpmnService.userMappingUpdate(eqpmnManageDto);
+		String pc1 = eqpmnManageDto.getPcmanageno1();
+		String pc2 = eqpmnManageDto.getPcmanageno2();
+		String mo1 = eqpmnManageDto.getMomanageno1();
+		String mo2 = eqpmnManageDto.getMomanageno2();
+		String ph = eqpmnManageDto.getPhmanageno();
+		
+		if(!pc1.isEmpty()) {
+			eqpmnManageDto.setManageno(pc1);
+			int rtn2 = eqpmnService.userMappingUpdate(eqpmnManageDto);
+			logger.info(eqpmnManageDto.getManageno());
+		}
+		if(!pc2.isEmpty()) {
+			eqpmnManageDto.setManageno(pc2);
+			int rtn2 = eqpmnService.userMappingUpdate(eqpmnManageDto);
+			logger.info(eqpmnManageDto.getManageno());
+		}
+		if(!mo1.isEmpty()) {
+			eqpmnManageDto.setManageno(mo1);
+			int rtn2 = eqpmnService.userMappingUpdate(eqpmnManageDto);
+			logger.info(eqpmnManageDto.getManageno());
+		}
+		if(!mo2.isEmpty()) {
+			eqpmnManageDto.setManageno(mo2);
+			int rtn2 = eqpmnService.userMappingUpdate(eqpmnManageDto);
+			logger.info(eqpmnManageDto.getManageno());
+		}
+		if(!ph.isEmpty()) {
+			eqpmnManageDto.setManageno(ph);
+			int rtn2 = eqpmnService.userMappingUpdate(eqpmnManageDto);
+			logger.info(eqpmnManageDto.getManageno());
+		}
 		
 		int rtn3 = eqpmnService.eqpmnMappingUpdate(eqpmnManageDto);
 		
 		logger.info("rtn =>" + rtn);
-		logger.info("rtn2 =>" + rtn2);
 		logger.info("rtn3 =>" + rtn3);
 		
 		ResponseEntity<String> resRtn = null;
