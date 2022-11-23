@@ -352,7 +352,7 @@
 						A.sso_pw							= 'NULL'
 		
 		WHEN NOT MATCHED THEN
--->
+--> 
 		MERGE
 		INTO			eqpmn_user_mapping A
 		USING			DUAL
