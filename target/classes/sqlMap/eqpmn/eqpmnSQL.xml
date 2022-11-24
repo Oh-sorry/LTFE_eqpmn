@@ -225,14 +225,23 @@
 	</select>
 	
 	<select id="userSelect" parameterType="com.mtpms.dto.eqpmnManageDto" resultType="com.mtpms.dto.eqpmnManageDto">
+
 		SELECT A.NAME,
 		       A.pern_no,
 		       A.post_name,
 		       A.phone_no,
 		       A.post_code,
-		       A.dept_name
-		FROM   hpa100t A
-		WHERE  1=1
+		       A.dept_name,
+		       B.pc_manage_no1,
+		       B.pc_manage_no2,
+		       B.mo_manage_no1,
+		       B.mo_manage_no2,
+		       B.ph_manage_no,
+		       B.use_yn,
+		       B.input_date,
+		       B.exp_date
+		FROM   hpa100t A, eqpmn_use_manage B
+		WHERE  A.pern_no = B.pern_no (+)
 			<if test="type != null and type == 'name'">
 				AND a.name LIKE '%' || #{keyword} || '%'
 			</if>
@@ -337,33 +346,18 @@
 	</update>
 	
 	<update id="userMappingUpdate" parameterType="com.mtpms.dto.eqpmnManageDto">
-<!-- 		MERGE
-		INTO			eqpmn_user_mapping A
-		USING			DUAL
-		ON				(A.manage_no					= #{pcmanageno1}
-		OR				A.manage_no					= #{pcmanageno2}
-		OR				A.manage_no					= #{momanageno1}
-		OR				A.manage_no					= #{momanageno2}
-		OR				A.manage_no					= #{phmanageno})
-		
-		WHEN MATCHED	THEN UPDATE SET A.pern_no			= #{pernno},
-						A.cmos_pw							= 'NULL',
-						A.sso_id							= 'NULL',
-						A.sso_pw							= 'NULL'
-		
-		WHEN NOT MATCHED THEN
---> 
 		MERGE
 		INTO			eqpmn_user_mapping A
 		USING			DUAL
-		ON				(A.manage_no				= #{manageno}
-		AND				A.pern_no					= #{pernno})
+		ON				A.pern_no					= #{pernno}
 		
 		WHEN MATCHED THEN
-						UPDATE SET A.manage_no		= #{manageno},
+						UPDATE SET
 						A.cmos_pw					= 'NULL',
 						A.sso_id					= 'NULL',
 						A.sso_pw					= 'NULL'
+						WHERE
+						A.manage_no				= #{manageno}
 						
 		WHEN NOT MATCHED THEN
 		INSERT

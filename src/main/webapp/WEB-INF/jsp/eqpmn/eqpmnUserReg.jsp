@@ -97,6 +97,13 @@
 		
 		$('input[id=pernno]').attr('value', rowData.pernno);
 		$('input[id=name]').attr('value', rowData.name);
+		$('input[id=inputdate]').attr('value', rowData.inputdate);
+		$('input[id=expdate]').attr('value', rowData.expdate);
+		$('input[id=pcmanageno1]').attr('value', rowData.pcmanageno1);
+		$('input[id=pcmanageno2]').attr('value', rowData.pcmanageno2);
+		$('input[id=momanageno1]').attr('value', rowData.momanageno1);
+		$('input[id=momanageno2]').attr('value', rowData.momanageno2);
+		$('input[id=phmanageno]').attr('value', rowData.phmanageno);
 		$('#modalpopup').modal('hide');
 		
 	}
@@ -227,6 +234,11 @@
 			    }
 			}
         });
+		/* if(rowData.useyn == "Y") {
+			alert("사용가능한 장비를 선택해주세요");
+			return;
+			
+		} */
 		if(rowData.codenm == "수탁망PC") {
 			$('input[id=pcmanageno1]').attr('value', rowData.manageno);
 		} else if (rowData.codenm == "인터넷망PC") {

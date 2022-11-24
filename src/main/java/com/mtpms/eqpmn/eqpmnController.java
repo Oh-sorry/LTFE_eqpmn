@@ -238,7 +238,7 @@ public class eqpmnController {
 		
 		int rtn2 = eqpmnService.userDelete2(eqpmnManageDto);
 		
-		int rtn3 = eqpmnService.userDelete2(eqpmnManageDto);
+		int rtn3 = eqpmnService.userDelete3(eqpmnManageDto);
 		
 		logger.info("rtn =>" + rtn);
 		
