@@ -100,11 +100,12 @@
 		
 		var timestamp = parseInt(rowData.inputdate)
 		var dateFormat = new Date(timestamp);
-		var inputdate = dateFormat.getFullYear() + "-"+(dateFormat.getMonth()+1)+ "-"+dateFormat.getDate();
+		var inputdate = dateFormat.getFullYear() + "-"+((dateFormat.getMonth()>9) ? (dateFormat.getMonth()+1) : ("0"+(dateFormat.getMonth()+1)))+ "-"+((dateFormat.getDate()>9) ? (dateFormat.getDate()) :"0" +(dateFormat.getDate()));
+		
 		
 		var timestamp2 = parseInt(rowData.expdate)
 		var dateFormat2 = new Date(timestamp2);
-		var expdate = dateFormat2.getFullYear() + "-"+(dateFormat2.getMonth()+1)+ "-"+dateFormat2.getDate();
+		var expdate = dateFormat2.getFullYear() + "-"+((dateFormat2.getMonth()>9) ? (dateFormat2.getMonth()+1) : ("0"+(dateFormat2.getMonth()+1)))+ "-"+((dateFormat2.getDate()>9) ? (dateFormat2.getDate()) :"0" +(dateFormat2.getDate()));
 		
 		$('input[id=inputdate]').attr('value', inputdate);
 		$('input[id=expdate]').attr('value', expdate);
@@ -487,7 +488,7 @@
         </button>
       </div>
       <div class="modal-body">
-		<form class="form-inline" id="userForm" name="userForm">
+		<form class="form-inline" id="userForm" name="userForm" onsubmit="return false;">
 				<div class="form-row">
 		  	  &emsp;<select class="form-control" id="type" name="type">
 		  		    	<option value="name" selected> 성명</option>
@@ -525,7 +526,7 @@
         </button>
       </div>
       <div class="modal-body">
-		<form class="form-inline" id="eqpmnForm" name="eqpmnForm">
+		<form class="form-inline" id="eqpmnForm" name="eqpmnForm" onsubmit="return false;">
    		  <div class="input-group">
    		  	<div class="form-row">
    		  		<div class="form-row">
