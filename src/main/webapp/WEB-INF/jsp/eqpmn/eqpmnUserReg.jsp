@@ -97,8 +97,17 @@
 		
 		$('input[id=pernno]').attr('value', rowData.pernno);
 		$('input[id=name]').attr('value', rowData.name);
-		$('input[id=inputdate]').attr('value', rowData.inputdate);
-		$('input[id=expdate]').attr('value', rowData.expdate);
+		
+		var timestamp = parseInt(rowData.inputdate)
+		var dateFormat = new Date(timestamp);
+		var inputdate = dateFormat.getFullYear() + "-"+(dateFormat.getMonth()+1)+ "-"+dateFormat.getDate();
+		
+		var timestamp2 = parseInt(rowData.expdate)
+		var dateFormat2 = new Date(timestamp2);
+		var expdate = dateFormat2.getFullYear() + "-"+(dateFormat2.getMonth()+1)+ "-"+dateFormat2.getDate();
+		
+		$('input[id=inputdate]').attr('value', inputdate);
+		$('input[id=expdate]').attr('value', expdate);
 		$('input[id=pcmanageno1]').attr('value', rowData.pcmanageno1);
 		$('input[id=pcmanageno2]').attr('value', rowData.pcmanageno2);
 		$('input[id=momanageno1]').attr('value', rowData.momanageno1);
@@ -337,9 +346,9 @@
 				</td>
 				<td colspan="80%">
 					<div class="input-group mb-2 mr-sm-2">
-						<input type="date" class="form-cotrol" id="inputdate" name="inputdate" maxlength="100" placeholder="투입일자">
+						<input type="date" class="form-cotrol" id="inputdate" name="inputdate" data-date-format="YYYY-MM-DD" maxlength="100">
 						~
-						<input type="date" class="form-cotrol" id="expdate" name="expdate" maxlength="100" placeholder="철수일자">
+						<input type="date" class="form-cotrol" id="expdate" name="expdate" maxlength="100">
 						<button type="button" class="btn btn-sm btn-secondary" onclick="javascript:resetDate()">X</button>
 					</div>
 				</td>
@@ -529,7 +538,7 @@
 		      			</c:forEach>
 					</select>
 				</div>
-				<div class="form-row">
+				<%-- <div class="form-row">
 					<div class="input-group-prepend">
 		       			&emsp;<div class="input-group-text">사용여부</div>
 		     		</div>
@@ -538,7 +547,7 @@
 		        			<option value="${cnmList.useyn}">${cnmList.useyn}</option>
 		      			</c:forEach>
 					</select>
-				</div>
+				</div> --%>
 				&emsp;<button type="button" class="btn btn-sm btn-info mb-2" onclick="javascript:goSearch1()"><i class="bi bi-search"></i> 조회</button>
 			  </div>
 			  
