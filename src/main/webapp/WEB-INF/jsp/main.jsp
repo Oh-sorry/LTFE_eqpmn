@@ -175,11 +175,7 @@ $(document).ready(function () {
 </head>
 <body>
 <form id="topMenuFrom" name="topMenuFrom" method="POST" action="<c:url value='/main/main.do'/>">
-<input type="hidden" name="topMenuId" id="topMenuId"/>
-<input type="hidden" name="topMenuName" id="topMenuName"/>
-<input type="hidden" name="leftMenuId" id="leftMenuId"/>
-<input type="hidden" name="leftMenuName" id="leftMenuName"/>
-<input type="hidden" name="searchprojectid" id="searchprojectid"/>
+
 </form>
 <form id="topLoginfm" name="topLoginfm"></form>
 
